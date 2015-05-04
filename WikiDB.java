@@ -1,8 +1,10 @@
 package Marty.company;
 
+import java.lang.*;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Date;
@@ -243,8 +245,11 @@ public class WikiDB {
 
     }
 
-    public void searchCharacter(String characterName){
+    public ArrayList searchCharacter(String characterName){
         ResultSet resultSet = null;
+        ArrayList<Character> characterDetails = new ArrayList<Character>();
+
+
         //TODO CHANGE = TO LIKE
         String fetchAllDataSQL = "SELECT * from CosplayCharacter where name = '" + characterName +"'";
         String universeName = "";
@@ -253,6 +258,7 @@ public class WikiDB {
         try{
             resultSet = statement.executeQuery(fetchAllDataSQL);
             while (resultSet.next()) {
+                int characterID = resultSet.getInt("characterID");
                 String gender = resultSet.getString("gender");
                 int genreID = resultSet.getInt("genreID");
                 String genreName = getGenreName(genreID);
@@ -261,6 +267,9 @@ public class WikiDB {
                 int mediaID = resultSet.getInt("mediaID");
                 String mediaTitle = getMediaTile(mediaID);
                 String description = resultSet.getString("description");
+
+                characterDetails.add(new Character(characterID, characterName, gender, genreID,
+                        universeID, mediaID, description));
 
 
                 System.out.println("Character Name:" + characterName + " Gender: " + gender +
@@ -271,6 +280,8 @@ public class WikiDB {
         } catch (SQLException se){
             se.printStackTrace();
         }
+
+        return characterDetails;
 
     }
 

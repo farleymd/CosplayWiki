@@ -9,7 +9,7 @@ public class Main {
         WikiDB wikiDB = new WikiDB();
 
         try{
-            CharacterPage characterPage = new CharacterPage();
+            CharacterPage characterPage = new CharacterPage(wikiDB);
         } catch (IOException io){
             io.printStackTrace();
         }
@@ -29,7 +29,7 @@ public class Main {
                 "a universe that doesn't exist.");
 
         wikiDB.insertCharacter("Sailor Moon", "Female", "Anime", "Sailor Moon", "Sailor Moon SuperS", "This is a test.");
-        wikiDB.searchCharacter("Sailor Moon");
+        //wikiDB.searchCharacter("Sailor Moon");
 
         //wikiDB.deleteDB();
 
