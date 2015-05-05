@@ -26,11 +26,19 @@ public class Main {
         wikiDB.insertCharacter("Sailor Moon", "Female", "Anime", "Sailor Moon", "Sailor Moon SuperS", "This is a test.");
         //wikiDB.searchCharacter("Sailor Moon");
 
+        int characterID = wikiDB.getCharacterID("Sailor Moon");
+
+
+        //TODO TRUNCATE URL; MAKE TINYURL
+        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
+
+
         try{
             CharacterPage characterPage = new CharacterPage(wikiDB);
         } catch (IOException io){
             io.printStackTrace();
         }
+
 
 
         //wikiDB.deleteDB();

@@ -66,12 +66,12 @@ public class WikiDB {
 
             String createImageTableSQL = "CREATE TABLE Images (ImageID int NOT NULL GENERATED ALWAYS " +
                     "AS IDENTITY (START WITH 1, INCREMENT BY 1), author varchar(60) not null," +
-                    "dateUploaded date, location varchar(60), characterID int, url varchar(60)," +
+                    "dateUploaded date, location varchar(60), characterID int, url varchar(500)," +
                     "tutorialID int)";
 
             String createTutorialTableSQL = "CREATE TABLE Tutorials (TutorialID int NOT NULL GENERATED ALWAYS " +
                     "AS IDENTITY (START WITH 1, INCREMENT BY 1), author varchar(60) not null," +
-                    "dateCreated date, type varchar(60), characterID int, url varchar(60)," +
+                    "dateCreated date, type varchar(60), characterID int, url varchar(60) not null," +
                     "imageID int)";
 
             try {
@@ -273,7 +273,7 @@ public class WikiDB {
                         universeID, mediaID, description));
 
 
-                System.out.println("Character Name:" + characterName + " Gender: " + gender +
+                System.out.println("CharacterID: " + characterID + "Character Name:" + characterName + " Gender: " + gender +
                         " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
                         mediaTitle + " Character Description: " + description);
             }
@@ -457,8 +457,76 @@ public class WikiDB {
         return mediaTitle;
     }
 
-    public void insertImage (int characterID){
+    public int getCharacterID(String characterName){
+        ResultSet resultSet = null;
+        int characterID = 0;
 
+        try{
+            String searchGenre = "select * from CosplayCharacter where name = '" + characterName + "'";
+            PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            resultSet = recordSearch.executeQuery();
+
+            if (resultSet.next()) {
+                //get the universe name based on the ID
+                characterID = resultSet.getInt("characterID");
+            } else{
+                System.out.println("Character could not be found.");
+
+            }
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return characterID;
+    }
+
+    public void insertImage (int characterID, String author, String url){
+        ResultSet resultSet = null;
+
+
+        String prepImageInsert = "INSERT INTO Images(author, characterID, url) VALUES (?,?,?)";
+
+        try {
+            psInsert = conn.prepareStatement(prepImageInsert);
+            allStatements.add(psInsert);
+
+            psInsert.setString(1, author);
+
+            psInsert.setInt(2, characterID);
+
+            psInsert.setString(3, url);
+            psInsert.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+    }
+
+    public ArrayList searchImages (int characterID){
+        ResultSet resultSet = null;
+        ArrayList<String> characterImages = new ArrayList<String>();
+
+
+
+        try {
+            String imageSearch ="select * from Images where characterID = " + characterID +"";
+            PreparedStatement recordSearch = conn.prepareStatement(imageSearch);
+            resultSet = recordSearch.executeQuery();
+
+            if (resultSet.next()) {
+                String imageURL ="";
+                imageURL = resultSet.getString("url");
+
+                characterImages.add(imageURL);
+
+            } else{
+                System.out.println("No images were found.");
+            }
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return characterImages;
     }
 
     public void deleteDB(){

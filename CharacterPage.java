@@ -57,6 +57,7 @@ public class CharacterPage extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchString = searchText.getText();
+                int characterID = 0;
                 String characterNameText = "";
                 String genderText = "";
                 int genreIDInt = 0;
@@ -75,6 +76,8 @@ public class CharacterPage extends JFrame {
                     ArrayList<Character> characterDetails = wikiDB.searchCharacter(searchString);
 
                     for (int i = 0; i < characterDetails.size(); i++){
+                        characterID = characterDetails.get(i).getCharacterID();
+
                         characterNameText =characterDetails.get(i).getCharacterName();
                         genderText = characterDetails.get(i).getGender();
 
@@ -98,13 +101,30 @@ public class CharacterPage extends JFrame {
                     titleName.setText(mediaText);
                     characterDescription.setText(descriptionText);
 
+                    ArrayList<String> characterImages = wikiDB.searchImages(characterID);
+
+                    for (int x = 0; x < characterImages.size(); x++){
+                        String imageURL = characterImages.get(x);
+
+                        //TODO FIX THIS
+
+                        ImageIcon icon = createImageIcon(imageURL, "Sailor Moon Picture");
+
+                        imagesPanel.add(new JLabel(icon));
+
+                    }
+
                 }
             }
         });
 
+
+
         imageAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //use image's url to display the picture
+
                 JPanel myPanel = new JPanel();
                 JTextField author = new JTextField(5);
                 JTextField dateUploaded = new JTextField(10);
@@ -143,6 +163,16 @@ public class CharacterPage extends JFrame {
 
 
 
+    }
+
+    protected static ImageIcon createImageIcon(String path,
+                                               String description) {
+        if (path != null) {
+            return new ImageIcon(path, description);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
     }
 
 
