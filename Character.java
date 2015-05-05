@@ -24,4 +24,34 @@ public class Character {
         this.mediaID = mediaID;
         this.description = description;
     }
+
+    public int getCharacterID(){
+        return characterID;
+    }
+
+    public String getCharacterName() {
+        return characterName;
+    }
+
+    public String getGender(){
+        return gender;
+    }
+
+    public int getGenreID(){
+        return genreID;
+    }
+
+    public int getUniverseID(){
+        return universeID;
+    }
+
+    public int getMediaID(){
+        return mediaID;
+    }
+
+    public String getDescription(){
+        return description;
+    }
+
+
 }

@@ -28,10 +28,12 @@ public class CharacterPage extends JFrame {
     private JLabel imageLabel;
     private JPanel imagesPanel;
     private JLabel genderName;
+    private JButton imageAdd;
 
     final String character = "Character";
     final String genre = "Genre";
     final String universe = "Universe";
+    final String mediaTitle = "Title of Series";
 
     public CharacterPage(WikiDB db) throws IOException {
         super("Character Page");
@@ -44,6 +46,7 @@ public class CharacterPage extends JFrame {
         this.wikiDB = db;
 
         searchDropList.addItem(character);
+        searchDropList.addItem(mediaTitle);
         searchDropList.addItem(genre);
         searchDropList.addItem(universe);
 
@@ -54,6 +57,16 @@ public class CharacterPage extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String searchString = searchText.getText();
+                String characterNameText = "";
+                String genderText = "";
+                int genreIDInt = 0;
+                String genreText="";
+                int universeIDInt = 0;
+                String universeText = "";
+                int mediaIDInt = 0;
+                String mediaText = "";
+                String descriptionText = "";
+
 
                 if (searchDropList.getSelectedItem().equals(character)){
 
@@ -61,10 +74,74 @@ public class CharacterPage extends JFrame {
                     //will always be the same
                     ArrayList<Character> characterDetails = wikiDB.searchCharacter(searchString);
 
+                    for (int i = 0; i < characterDetails.size(); i++){
+                        characterNameText =characterDetails.get(i).getCharacterName();
+                        genderText = characterDetails.get(i).getGender();
+
+                        genreIDInt = characterDetails.get(i).getGenreID();
+                        genreText = wikiDB.getGenreName(genreIDInt);
+
+                        universeIDInt = characterDetails.get(i).getUniverseID();
+                        universeText = wikiDB.getUniverseName(universeIDInt);
+
+                        mediaIDInt = characterDetails.get(i).getMediaID();
+                        mediaText = wikiDB.getMediaTile(mediaIDInt);
+
+                        descriptionText = characterDetails.get(i).getDescription();
+
+                    }
+
+                    characterName.setText(characterNameText);
+                    genderName.setText(genderText);
+                    genreName.setText(genreText);
+                    universeName.setText(universeText);
+                    titleName.setText(mediaText);
+                    characterDescription.setText(descriptionText);
 
                 }
             }
         });
+
+        imageAdd.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JPanel myPanel = new JPanel();
+                JTextField author = new JTextField(5);
+                JTextField dateUploaded = new JTextField(10);
+                JTextField imageURL = new JTextField(15);
+
+                myPanel.add(new JLabel("Author: "));
+                myPanel.add(author);
+
+                myPanel.add(new JLabel("Date Uploaded"));
+                myPanel.add(dateUploaded);
+
+                myPanel.add(new JLabel("Image URL:"));
+                myPanel.add(imageURL);
+                myPanel.add(Box.createHorizontalStrut(15));
+
+                JOptionPane.showConfirmDialog(null, myPanel, "Please enter x and Y value",
+                        JOptionPane.OK_CANCEL_OPTION);
+
+
+
+                String characterNameText = characterName.getText();
+                int characterID = 0;
+
+                ArrayList<Character> characterDetails = wikiDB.searchCharacter(characterNameText);
+
+                for (int i = 0; i < characterDetails.size(); i++){
+                    characterID = characterDetails.get(i).getCharacterID();
+                }
+
+
+
+
+
+            }
+        });
+
+
 
     }
 

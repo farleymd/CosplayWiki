@@ -251,6 +251,7 @@ public class WikiDB {
 
 
         //TODO CHANGE = TO LIKE
+        //TODO SET LOGIC IF CHARACTER NAME NOT FOUND
         String fetchAllDataSQL = "SELECT * from CosplayCharacter where name = '" + characterName +"'";
         String universeName = "";
 
@@ -273,8 +274,8 @@ public class WikiDB {
 
 
                 System.out.println("Character Name:" + characterName + " Gender: " + gender +
-                " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
-                mediaTitle + " Character Description: " + description);
+                        " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
+                        mediaTitle + " Character Description: " + description);
             }
 
         } catch (SQLException se){
@@ -408,7 +409,15 @@ public class WikiDB {
                 mediaID = resultSet.getInt("mediaID");
             } else{
                 //if that genre doesn't exist, set the genre to Other's genreID
-                String otherSearch ="select * from Media where mediaTitle = 'Unknown'";
+                String addMediaTitle = "INSERT INTO Media(mediaTitle) VALUES (?)";
+                psInsert = conn.prepareStatement(addMediaTitle);
+                allStatements.add(psInsert);
+
+                psInsert.setString(1,mediaTitle);
+                psInsert.execute();
+
+
+                String otherSearch ="select * from Media where mediaTitle = '" + mediaTitle + "'";
                 PreparedStatement otherDecision = conn.prepareStatement(otherSearch);
                 secondResultSet = otherDecision.executeQuery();
 
@@ -437,7 +446,7 @@ public class WikiDB {
                 //get the universe name based on the ID
                 mediaTitle = resultSet.getString("mediaTitle");
             } else{
-                //if that universe doesn't exist, set the universe to Other
+                //if that universe doesn't exist, set the media title to Unknown
                 mediaTitle = "Unknown";
 
             }
@@ -446,6 +455,10 @@ public class WikiDB {
         }
 
         return mediaTitle;
+    }
+
+    public void insertImage (int characterID){
+
     }
 
     public void deleteDB(){
