@@ -190,11 +190,9 @@ public class CharacterPage extends JFrame {
                 myPanel.add(imageURL);
                 myPanel.add(Box.createHorizontalStrut(15));
 
-                JOptionPane.showConfirmDialog(null, myPanel, "Please enter x and Y value",
+                JOptionPane.showConfirmDialog(null, myPanel, "Please enter following fields",
                         JOptionPane.OK_CANCEL_OPTION);
-
-
-
+                
                 String characterNameText = characterName.getText();
                 int characterID = 0;
 
@@ -203,6 +201,8 @@ public class CharacterPage extends JFrame {
                 for (int i = 0; i < characterDetails.size(); i++){
                     characterID = characterDetails.get(i).getCharacterID();
                 }
+
+                wikiDB.insertImage(characterID, author.getText(), imageURL.getText());
 
             }
         });
