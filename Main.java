@@ -35,6 +35,7 @@ public class Main {
 
         try{
             CharacterPage characterPage = new CharacterPage(wikiDB);
+
         } catch (IOException io){
             io.printStackTrace();
         }

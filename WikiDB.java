@@ -21,7 +21,7 @@ public class WikiDB {
 
     Statement statement = null;
     Connection conn = null;
-    //ResultSet resultSet = null;
+    ResultSet resultSet = null;
     ResultSet secondResultSet = null; //used when an insert/update requires two searches
 
     PreparedStatement psInsert = null;
@@ -48,7 +48,7 @@ public class WikiDB {
                     "genreID int, " +
                     "universeID int, " +
                     "mediaID int, " +
-                    "description varchar(60))";
+                    "description varchar(500))";
 
             String createGenreTableSQL = "CREATE TABLE Genre (GenreID INTEGER NOT NULL GENERATED ALWAYS " +
                     "AS IDENTITY (START WITH 1, INCREMENT BY 1), genreName varchar(60))";
@@ -57,7 +57,7 @@ public class WikiDB {
                     "AS IDENTITY (START WITH 1, INCREMENT BY 1), universeName varchar(60))";
 
             String createMediaTitleTableSQL = "CREATE TABLE Media (MediaID int NOT NULL GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), mediaTitle varchar(60)," +
+                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), mediaTitle varchar(100)," +
                     "genreID int," +
                     "universeID int," +
                     "createdBy varchar(60)," +
@@ -545,5 +545,38 @@ public class WikiDB {
             se.printStackTrace();
         }
 
+    }
+
+    public void closeDB(){
+        try {
+            if (resultSet != null) {
+                resultSet.close();
+            }
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
+
+        for (Statement statement : allStatements) {
+
+            if (statement != null) {
+                try {
+                    statement.close();
+                    System.out.println("Statement closed.");
+
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+            }
+        }
+
+        try {
+            if (conn != null) {
+                conn.close();
+                System.out.println("Database connection closed.");
+            }
+
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        }
     }
 }

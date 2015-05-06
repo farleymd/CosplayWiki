@@ -1,12 +1,13 @@
 package Marty.company;
 
+import sun.plugin2.ipc.windows.WindowsEvent;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
+import java.awt.event.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +15,8 @@ import java.util.ArrayList;
  */
 public class CharacterPage extends JFrame {
     private WikiDB wikiDB;
+    private newCharacter newCharacter;
+    private CharacterPage characterPage;
 
     private JPanel rootPanel;
     private JButton searchButton;
@@ -31,6 +34,8 @@ public class CharacterPage extends JFrame {
     private JPanel imagesPanel;
     private JLabel genderName;
     private JButton imageAdd;
+    private JButton quitButton;
+    private JButton editCharacterButton;
 
     final String character = "Character";
     final String genre = "Genre";
@@ -43,9 +48,11 @@ public class CharacterPage extends JFrame {
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
-        setSize(new Dimension(300,500));
+        setSize(new Dimension(500,500));
+        imagesPanel.setLayout(new BorderLayout());
 
         this.wikiDB = db;
+
 
         searchDropList.addItem(character);
         searchDropList.addItem(mediaTitle);
@@ -87,11 +94,16 @@ public class CharacterPage extends JFrame {
                         int reply = JOptionPane.showConfirmDialog(null, "That character cannot be found." +
                                 "Would you like to add them?", "Title", JOptionPane.YES_NO_OPTION);
                         if (reply == JOptionPane.YES_OPTION) {
-                            JOptionPane.showMessageDialog(null, "HELLO");
+                            try {
+                                setVisible(false);
+                                new newCharacter(wikiDB).setVisible(true);
+                            } catch (IOException io){
+                                io.printStackTrace();
+                            }
+
                         }
                         else {
                             JOptionPane.showMessageDialog(null, "GOODBYE");
-                            System.exit(0);
                         }
                     }
 
@@ -125,12 +137,29 @@ public class CharacterPage extends JFrame {
 
                     for (int x = 0; x < characterImages.size(); x++){
                         String imageURL = characterImages.get(x);
+                        Graphics g = getGraphics();
 
-                        //TODO FIX THIS
 
-                        ImageIcon icon = createImageIcon(imageURL, "Sailor Moon Picture");
+                       try {
+                           URL url = new URL(imageURL);
 
-                        imagesPanel.add(new JLabel(icon));
+                           //icon.paintIcon(imagesPanel,g,300,100);
+
+
+                           JLabel wIcon = new JLabel(new ImageIcon(url));
+
+                           imagesPanel.setVisible(true);
+                           imagesPanel.add(wIcon);
+
+
+
+                       } catch (MalformedURLException mue){
+                           mue.printStackTrace();
+                       }
+
+
+
+
 
                     }
 
@@ -209,6 +238,15 @@ public class CharacterPage extends JFrame {
                 searchText.setFont(userInput);
 
 
+            }
+        });
+
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                wikiDB.deleteDB();
+                wikiDB.closeDB();
+                System.exit(0);
             }
         });
     }
