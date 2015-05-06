@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -53,6 +55,11 @@ public class CharacterPage extends JFrame {
         genreLabel.setLocation(1,3);
         genreName.setLocation(1,3);
 
+       genderName.setText("");
+        universeName.setText("");
+        titleName.setText("");
+        genreName.setText("");
+
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -74,6 +81,19 @@ public class CharacterPage extends JFrame {
                     //can use an arrayList to retrieve details because number of columns
                     //will always be the same
                     ArrayList<Character> characterDetails = wikiDB.searchCharacter(searchString);
+
+                    if (characterDetails.size() ==0){
+
+                        int reply = JOptionPane.showConfirmDialog(null, "That character cannot be found." +
+                                "Would you like to add them?", "Title", JOptionPane.YES_NO_OPTION);
+                        if (reply == JOptionPane.YES_OPTION) {
+                            JOptionPane.showMessageDialog(null, "HELLO");
+                        }
+                        else {
+                            JOptionPane.showMessageDialog(null, "GOODBYE");
+                            System.exit(0);
+                        }
+                    }
 
                     for (int i = 0; i < characterDetails.size(); i++){
                         characterID = characterDetails.get(i).getCharacterID();
@@ -113,6 +133,7 @@ public class CharacterPage extends JFrame {
                         imagesPanel.add(new JLabel(icon));
 
                     }
+
 
                 }
             }
@@ -154,15 +175,42 @@ public class CharacterPage extends JFrame {
                     characterID = characterDetails.get(i).getCharacterID();
                 }
 
+            }
+        });
 
+        searchDropList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Font font = new Font("Courier", Font.ITALIC,12);
 
+                searchText.setFont(font);
 
-
+                if (searchDropList.getSelectedItem().equals(character)){
+                    searchText.setText("Search for a character by name.");
+                } else if (searchDropList.getSelectedItem().equals(genre)){
+                    searchText.setText("Search for genre, EX television, movies, comic.");
+                } else if (searchDropList.getSelectedItem().equals(universe)){
+                    searchText.setText("Search for universe, EX Marvel, Harry Potter.");
+                } else if (searchDropList.getSelectedItem().equals(mediaTitle)){
+                    searchText.setText("Search for title of series, EX The Avengers.");
+                }
             }
         });
 
 
+        searchText.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                searchText.setText("");
 
+                Font userInput = new Font("Courier", Font.BOLD,12);
+
+                searchText.setFont(userInput);
+
+
+            }
+        });
     }
 
     protected static ImageIcon createImageIcon(String path,
