@@ -2,12 +2,16 @@ package Marty.company;
 
 import sun.plugin2.ipc.windows.WindowsEvent;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 /**
@@ -15,8 +19,6 @@ import java.util.ArrayList;
  */
 public class CharacterPage extends JFrame {
     private WikiDB wikiDB;
-    private newCharacter newCharacter;
-    private CharacterPage characterPage;
 
     private JPanel rootPanel;
     private JButton searchButton;
@@ -31,11 +33,11 @@ public class CharacterPage extends JFrame {
     private JLabel titleName;
     private JTextPane characterDescription;
     private JLabel imageLabel;
-    private JPanel imagesPanel;
     private JLabel genderName;
-    private JButton imageAdd;
     private JButton quitButton;
     private JButton editCharacterButton;
+    private JButton addImagesButton;
+    private JLabel genderLabel;
 
     final String character = "Character";
     final String genre = "Genre";
@@ -44,12 +46,106 @@ public class CharacterPage extends JFrame {
 
     public CharacterPage(WikiDB db) throws IOException {
         super("Character Page");
-        setContentPane(rootPanel);
-        pack();
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setVisible(true);
-        setSize(new Dimension(500,500));
-        imagesPanel.setLayout(new BorderLayout());
+
+        setSize(new Dimension(1000,1000));
+
+        rootPanel.setLayout(new GridBagLayout());
+        final GridBagConstraints c = new GridBagConstraints();
+        rootPanel.setSize(new Dimension(500,500));
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 0;
+        rootPanel.add(searchText,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        c.gridx = 2;
+        c.gridy = 0;
+        rootPanel.add(searchButton,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 0;
+        rootPanel.add(searchDropList,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        c.gridx = 0;
+        c.gridy = 1;
+        rootPanel.add(characterName,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 1;
+        c.gridy = 1;
+        rootPanel.add(genderLabel,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 1;
+        rootPanel.add(genderName,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 2;
+        rootPanel.add(genreLabel,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 2;
+        rootPanel.add(genreName,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 3;
+        rootPanel.add(universeLabel,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 3;
+        rootPanel.add(universeName,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 4;
+        rootPanel.add(titleLabel,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 4;
+        rootPanel.add(titleName,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 2;
+        rootPanel.add(characterDescription,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 3;
+        rootPanel.add(imageLabel,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 5;
+        rootPanel.add(editCharacterButton,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 2;
+        c.gridy = 6;
+        rootPanel.add(addImagesButton,c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 6;
+        rootPanel.add(quitButton,c);
+
+
+
+
+
 
         this.wikiDB = db;
 
@@ -135,34 +231,53 @@ public class CharacterPage extends JFrame {
 
                     ArrayList<String> characterImages = wikiDB.searchImages(characterID);
 
+                    BufferedImage img1 = null;
+
                     for (int x = 0; x < characterImages.size(); x++){
                         String imageURL = characterImages.get(x);
-                        Graphics g = getGraphics();
 
+                        //BufferedImage img1 = null;
 
-                       try {
-                           URL url = new URL(imageURL);
+                        try
+                        {
+                            URL url1 = new URL(imageURL);
 
-                           //icon.paintIcon(imagesPanel,g,300,100);
+                            URLConnection conn1 = url1.openConnection();
+                            conn1.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                            InputStream in1 = conn1.getInputStream();
 
-
-                           JLabel wIcon = new JLabel(new ImageIcon(url));
-
-                           imagesPanel.setVisible(true);
-                           imagesPanel.add(wIcon);
-
-
-
-                       } catch (MalformedURLException mue){
-                           mue.printStackTrace();
-                       }
-
-
-
+                            img1 = ImageIO.read(in1);
+                        } catch (IOException ioe)
+                        {
+                            ioe.printStackTrace();
+                        }
 
 
                     }
 
+                    int w= 25;
+                    int h = 25;
+
+                    BufferedImage img2 = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g2 = img2.createGraphics();
+                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    g2.drawImage(img1,0,0,w,h,null);
+                    g2.dispose();
+
+                    c.fill = GridBagConstraints.HORIZONTAL;
+
+
+                    JLabel cIcon = new JLabel(new ImageIcon(img1));
+
+                    c.gridx = 0;
+                    c.gridy = 6;
+
+                    rootPanel.add(cIcon,c);
+                    rootPanel.repaint();
+
+                    setContentPane(rootPanel);
+                    pack();
+                    setVisible(true);
 
                 }
             }
@@ -170,7 +285,7 @@ public class CharacterPage extends JFrame {
 
 
 
-        imageAdd.addActionListener(new ActionListener() {
+        addImagesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 //use image's url to display the picture
@@ -192,7 +307,7 @@ public class CharacterPage extends JFrame {
 
                 JOptionPane.showConfirmDialog(null, myPanel, "Please enter following fields",
                         JOptionPane.OK_CANCEL_OPTION);
-                
+
                 String characterNameText = characterName.getText();
                 int characterID = 0;
 
@@ -249,6 +364,10 @@ public class CharacterPage extends JFrame {
                 System.exit(0);
             }
         });
+
+        setContentPane(rootPanel);
+        pack();
+        setVisible(true);
     }
 
     protected static ImageIcon createImageIcon(String path,
