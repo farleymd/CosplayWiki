@@ -22,10 +22,10 @@ public class WikiDB {
     Statement statement = null;
     Connection conn = null;
     ResultSet resultSet = null;
-    ResultSet secondResultSet = null; //used when an insert/update requires two searches
+
 
     PreparedStatement psInsert = null;
-    LinkedList<Statement> allStatements = new LinkedList<Statement>();
+    //LinkedList<Statement> allStatements = new LinkedList<Statement>();
 
     boolean dbCreated = false;  //boolean to determine if this is the first time database has been accessed
 
@@ -33,52 +33,65 @@ public class WikiDB {
         return dbCreated;
     }
 
-
-    public void createDB(){
+    public void connectDB(){
         try {
             conn = DriverManager.getConnection(protocol + dbName +";create=true",USER,PASS);
             statement = conn.createStatement();
-            allStatements.add(statement);
 
-            String createCharTableSQL = "CREATE TABLE CosplayCharacter (" +
-                    "CharacterID int NOT NULL primary key GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
-                    "name varchar(60) not null," +
-                    "gender varchar(10)," +
-                    "genreID int, " +
-                    "universeID int, " +
-                    "mediaID int, " +
-                    "description varchar(500))";
+        } catch (SQLException sql){
 
-            String createGenreTableSQL = "CREATE TABLE Genre (GenreID INTEGER NOT NULL GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), genreName varchar(60))";
+        }
 
-            String createUniverseTableSQL = "CREATE TABLE Universe (UniverseID int NOT NULL GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), universeName varchar(60))";
+    }
 
-            String createMediaTitleTableSQL = "CREATE TABLE Media (MediaID int NOT NULL GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), mediaTitle varchar(100)," +
-                    "genreID int," +
-                    "universeID int," +
-                    "createdBy varchar(60)," +
-                    "yearReleased int," +
-                    "description varchar(60))";
 
-            String createImageTableSQL = "CREATE TABLE Images (ImageID int NOT NULL GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), author varchar(60) not null," +
-                    "dateUploaded date, location varchar(60), characterID int, url varchar(500)," +
-                    "tutorialID int)";
+    public void createDB() {
 
-            String createTutorialTableSQL = "CREATE TABLE Tutorials (TutorialID int NOT NULL GENERATED ALWAYS " +
-                    "AS IDENTITY (START WITH 1, INCREMENT BY 1), author varchar(60) not null," +
-                    "dateCreated date, type varchar(60), characterID int, url varchar(60) not null," +
-                    "imageID int)";
+        try {
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet resultSet = meta.getTables(null,null,"CosplayCharacter", null);
 
-            try {
+            if (resultSet.next()) {
+                System.out.println("Tables exist.");
+            } else {
+                String createCharTableSQL = "CREATE TABLE CosplayCharacter (" +
+                        "CharacterID int NOT NULL primary key GENERATED ALWAYS " +
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
+                        "name varchar(60) not null," +
+                        "gender varchar(10)," +
+                        "genreID int, " +
+                        "universeID int, " +
+                        "mediaID int, " +
+                        "description varchar(500))";
+
+                String createGenreTableSQL = "CREATE TABLE Genre (GenreID INTEGER NOT NULL GENERATED ALWAYS " +
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), genreName varchar(60))";
+
+                String createUniverseTableSQL = "CREATE TABLE Universe (UniverseID int NOT NULL GENERATED ALWAYS " +
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), universeName varchar(60))";
+
+                String createMediaTitleTableSQL = "CREATE TABLE Media (MediaID int NOT NULL GENERATED ALWAYS " +
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), mediaTitle varchar(100)," +
+                        "genreID int," +
+                        "universeID int," +
+                        "createdBy varchar(60)," +
+                        "yearReleased int," +
+                        "description varchar(60))";
+
+                String createImageTableSQL = "CREATE TABLE Images (ImageID int NOT NULL GENERATED ALWAYS " +
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), author varchar(60) not null," +
+                        "dateUploaded date, location varchar(60), characterID int, url varchar(500)," +
+                        "tutorialID int)";
+
+                String createTutorialTableSQL = "CREATE TABLE Tutorials (TutorialID int NOT NULL GENERATED ALWAYS " +
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), author varchar(60) not null," +
+                        "dateCreated date, type varchar(60), characterID int, url varchar(60) not null," +
+                        "imageID int)";
+
                 statement.executeUpdate(createCharTableSQL);
 
                 //Marty.company.Character table print out confirmation
-                System.out.println("Marty.company.Character table created");
+                System.out.println("Character table created");
 
                 statement.executeUpdate(createGenreTableSQL);
 
@@ -105,16 +118,15 @@ public class WikiDB {
                 //Tutorial table print out confirmation
                 System.out.println("Tutorial table created");
 
-            } catch (SQLException se){
-                se.printStackTrace();
+                resultSet.close();
+
             }
 
-
-        } catch (SQLException se){
+        } catch (SQLException se) {
             se.printStackTrace();
+
         }
 
-        dbCreated = true;
 
     }
 
@@ -127,7 +139,6 @@ public class WikiDB {
 
         try {
             psInsert = conn.prepareStatement(prepGenreInsert);
-            allStatements.add(psInsert);
 
             //Set values in the genre table
             psInsert.setString(1,"Television");
@@ -149,7 +160,6 @@ public class WikiDB {
 
             //Set values in the Universe table
             psInsert = conn.prepareStatement(prepUniverseInsert);
-            allStatements.add(psInsert);
 
             psInsert.setString(1,"Hunger Games");
             psInsert.execute();
@@ -165,7 +175,6 @@ public class WikiDB {
             psInsert.execute();
 
             psInsert = conn.prepareStatement(prepMediaInsert);
-            allStatements.add(psInsert);
 
             //Set values in the Media table
             psInsert.setString(1,"Frozen");
@@ -186,7 +195,10 @@ public class WikiDB {
                 String mediaTitle = resultSet.getString("mediaTitle");
 
                 System.out.println("MediaID:" + mediaID + " Name: " + mediaTitle);
+
             }
+
+            resultSet.close();
 
 
         } catch (SQLException se){
@@ -208,7 +220,6 @@ public class WikiDB {
 
         try {
             psInsert = conn.prepareStatement(prepCharacterInsert);
-            allStatements.add(psInsert);
 
             psInsert.setString(1,characterName);
 
@@ -238,6 +249,8 @@ public class WikiDB {
                         " MediaID:" + mediaCharID);
             }
 
+            resultSet.close();
+
 
         } catch (SQLException se){
             se.printStackTrace();
@@ -252,12 +265,13 @@ public class WikiDB {
 
         //TODO CHANGE = TO LIKE
         //TODO SET LOGIC IF CHARACTER NAME NOT FOUND
-        String fetchAllDataSQL = "SELECT * from CosplayCharacter where name = '" + characterName +"'";
-        String universeName = "";
-
+        String fetchAllDataSQL = "SELECT * from CosplayCharacter where name = (?)";
 
         try{
-            resultSet = statement.executeQuery(fetchAllDataSQL);
+            psInsert = conn.prepareStatement(fetchAllDataSQL);
+            psInsert.setString(1,characterName);
+            String universeName = "";
+            resultSet = psInsert.executeQuery();
             while (resultSet.next()) {
                 int characterID = resultSet.getInt("characterID");
                 String gender = resultSet.getString("gender");
@@ -276,7 +290,11 @@ public class WikiDB {
                 System.out.println("CharacterID: " + characterID + "Marty.company.Character Name:" + characterName + " Gender: " + gender +
                         " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
                         mediaTitle + " Marty.company.Character Description: " + description);
+
+
             }
+
+            resultSet.close();
 
         } catch (SQLException se){
             se.printStackTrace();
@@ -288,11 +306,13 @@ public class WikiDB {
 
     public int getGenreID(String genre){
         ResultSet resultSet = null;
+        ResultSet secondResultSet = null;
         int genreID = 0;
 
         try{
-            String searchGenre = "select * from Genre where genreName = '" + genre + "'";
+            String searchGenre = "select * from Genre where genreName = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setString(1,genre);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -308,7 +328,12 @@ public class WikiDB {
                     genreID = secondResultSet.getInt("genreID");
                 }
 
+                secondResultSet.close();
+
             }
+
+            resultSet.close();
+
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -321,8 +346,9 @@ public class WikiDB {
         String genreName = "";
 
         try{
-            String searchGenre = "select * from Genre where genreID = " + genreID + "" ;
+            String searchGenre = "select * from Genre where genreID = (?)" ;
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setInt(1,genreID);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -333,6 +359,8 @@ public class WikiDB {
                 genreName = "Other";
 
             }
+
+            resultSet.close();
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -343,11 +371,13 @@ public class WikiDB {
 
     public int getUniverseID(String universe){
         ResultSet resultSet = null;
+        ResultSet secondResultSet = null;
         int universeID = 0;
 
         try{
-            String searchGenre = "select * from Universe where universeName = '" + universe + "'";
+            String searchGenre = "select * from Universe where universeName = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setString(1,universe);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -362,7 +392,13 @@ public class WikiDB {
                 if (secondResultSet.next()){
                     universeID = secondResultSet.getInt("universeID");
                 }
+
+                secondResultSet.close();
             }
+
+            resultSet.close();
+
+
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -375,8 +411,9 @@ public class WikiDB {
         String universeName = "";
 
         try{
-            String searchGenre = "select * from Universe where universeID = " + universeID + "";
+            String searchGenre = "select * from Universe where universeID = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setInt(1,universeID);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -387,6 +424,8 @@ public class WikiDB {
                 universeName = "Unknown";
 
             }
+
+            resultSet.close();
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -397,11 +436,13 @@ public class WikiDB {
 
     public int getMediaID(String mediaTitle){
         ResultSet resultSet = null;
+        ResultSet secondResultSet = null;
         int mediaID = 0;
 
         try{
-            String searchGenre = "select * from Media where mediaTitle = '" + mediaTitle + "'";
+            String searchGenre = "select * from Media where mediaTitle = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setString(1,mediaTitle);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -411,7 +452,6 @@ public class WikiDB {
                 //if that genre doesn't exist, set the genre to Other's genreID
                 String addMediaTitle = "INSERT INTO Media(mediaTitle) VALUES (?)";
                 psInsert = conn.prepareStatement(addMediaTitle);
-                allStatements.add(psInsert);
 
                 psInsert.setString(1,mediaTitle);
                 psInsert.execute();
@@ -424,7 +464,13 @@ public class WikiDB {
                 if (secondResultSet.next()){
                     mediaID = secondResultSet.getInt("mediaID");
                 }
+
+                secondResultSet.close();
             }
+
+            resultSet.close();
+
+
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -438,8 +484,9 @@ public class WikiDB {
         String mediaTitle = "";
 
         try{
-            String searchGenre = "select * from Media where mediaID = " + mediaID + "";
+            String searchGenre = "select * from Media where mediaID = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setInt(1,mediaID);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -450,6 +497,9 @@ public class WikiDB {
                 mediaTitle = "Unknown";
 
             }
+
+            resultSet.close();
+
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -462,8 +512,9 @@ public class WikiDB {
         int characterID = 0;
 
         try{
-            String searchGenre = "select * from CosplayCharacter where name = '" + characterName + "'";
+            String searchGenre = "select * from CosplayCharacter where name = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setString(1,characterName);
             resultSet = recordSearch.executeQuery();
 
             if (resultSet.next()) {
@@ -473,6 +524,8 @@ public class WikiDB {
                 System.out.println("Marty.company.Character could not be found.");
 
             }
+
+            resultSet.close();
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -481,21 +534,18 @@ public class WikiDB {
     }
 
     public void insertImage (int characterID, String author, String url){
-        ResultSet resultSet = null;
-
 
         String prepImageInsert = "INSERT INTO Images(author, characterID, url) VALUES (?,?,?)";
 
         try {
             psInsert = conn.prepareStatement(prepImageInsert);
-            allStatements.add(psInsert);
+
 
             psInsert.setString(1, author);
-
             psInsert.setInt(2, characterID);
-
             psInsert.setString(3, url);
             psInsert.executeUpdate();
+
 
         } catch (SQLException se){
             se.printStackTrace();
@@ -506,22 +556,21 @@ public class WikiDB {
         ResultSet resultSet = null;
         ArrayList<String> characterImages = new ArrayList<String>();
 
-
-
         try {
-            String imageSearch ="select * from Images where characterID = " + characterID +"";
+            String imageSearch ="select * from Images where characterID = (?)";
             PreparedStatement recordSearch = conn.prepareStatement(imageSearch);
+            recordSearch.setInt(1,characterID);
             resultSet = recordSearch.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 String imageURL ="";
                 imageURL = resultSet.getString("url");
 
                 characterImages.add(imageURL);
-
-            } else{
-                System.out.println("No images were found.");
             }
+
+            resultSet.close();
+
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -535,12 +584,14 @@ public class WikiDB {
         String deleteImagesSQL = "DROP TABLE Images";
         String deleteUniverseSQL = "DROP TABLE Universe";
         String deleteTutorialsSQL = "DROP TABLE Tutorials";
+        String deleteMediaSQL = "DROP TABLE Media";
         try {
             statement.executeUpdate(deleteCharSQL);
             statement.executeUpdate(deleteGenreSQL);
             statement.executeUpdate(deleteImagesSQL);
             statement.executeUpdate(deleteUniverseSQL);
             statement.executeUpdate(deleteTutorialsSQL);
+            statement.executeUpdate(deleteMediaSQL);
         } catch (SQLException se){
             se.printStackTrace();
         }
@@ -554,19 +605,6 @@ public class WikiDB {
             }
         } catch (SQLException sqle) {
             sqle.printStackTrace();
-        }
-
-        for (Statement statement : allStatements) {
-
-            if (statement != null) {
-                try {
-                    statement.close();
-                    System.out.println("Statement closed.");
-
-                } catch (SQLException sqle) {
-                    sqle.printStackTrace();
-                }
-            }
         }
 
         try {

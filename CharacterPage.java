@@ -6,6 +6,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -142,11 +144,13 @@ public class CharacterPage extends JFrame {
                     ArrayList<String> characterImages = wikiDB.searchImages(characterID);
 
                     BufferedImage img1 = null;
+                    JPanel imagesPanel = new JPanel();
+                    imagesPanel.setLayout(new GridBagLayout());
 
                     for (int x = 0; x < characterImages.size(); x++){
                         String imageURL = characterImages.get(x);
 
-                        //BufferedImage img1 = null;
+                        //TODO MAKE IMAGE METHOD
 
                         try
                         {
@@ -165,31 +169,47 @@ public class CharacterPage extends JFrame {
 
                     }
 
-                    int w= 25;
-                    int h = 25;
-
+                    int w;
+                    int h;
+                    if (img1.getWidth() > img1.getHeight()) {
+                        //if the source was wider than it was tall, make the width 100,
+                        w = 100;
+                        //and scale the height accordingly
+                        h = (int) ((double)img1.getHeight() / img1.getWidth() * 100.0);
+                    } else {
+                        //otherwise, vice versa (and if w == h, then they are both 100)
+                        h = 100;
+                        w = (int) ((double)img1.getWidth() / img1.getHeight() * 100.0);
+                    }
                     BufferedImage img2 = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
                     Graphics2D g2 = img2.createGraphics();
                     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                     g2.drawImage(img1,0,0,w,h,null);
                     g2.dispose();
 
-                    c.fill = GridBagConstraints.HORIZONTAL;
 
 
-                    JLabel cIcon = new JLabel(new ImageIcon(img1));
 
-                    c.gridx = 0;
-                    c.gridy = 6;
+
+
+
+                    JLabel cIcon = new JLabel(new ImageIcon(img2));
+
 
                     rootPanel.add(cIcon,c);
                     rootPanel.repaint();
 
-                    setContentPane(rootPanel);
-                    pack();
-                    setVisible(true);
+
 
                 }
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = 0;
+                c.gridy = 6;
+
+                setContentPane(rootPanel);
+                pack();
+                setVisible(true);
+
             }
         });
 
@@ -280,18 +300,25 @@ public class CharacterPage extends JFrame {
         setVisible(true);
     }
 
-    protected static ImageIcon createImageIcon(String path,
-                                               String description) {
-        if (path != null) {
-            return new ImageIcon(path, description);
-        } else {
-            System.err.println("Couldn't find file: " + path);
-            return null;
-        }
+    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
+        int imageWidth  = image.getWidth();
+        int imageHeight = image.getHeight();
+
+        double scaleX = (double)width/imageWidth;
+        double scaleY = (double)height/imageHeight;
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+
+        return bilinearScaleOp.filter(
+                image,
+                new BufferedImage(width, height, image.getType()));
     }
+
+
 
     protected void buildUI(GridBagConstraints c){
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 1;
         c.gridx = 0;
         c.gridy = 0;
         rootPanel.add(searchText,c);
@@ -360,7 +387,7 @@ public class CharacterPage extends JFrame {
 
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 5;
         rootPanel.add(imageLabel,c);
 
         c.fill = GridBagConstraints.HORIZONTAL;

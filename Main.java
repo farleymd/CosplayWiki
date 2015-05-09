@@ -15,6 +15,7 @@ public class Main {
         boolean databaseExist = wikiDB.isDbCreated();
 
         if (databaseExist == false){
+            wikiDB.connectDB();
             wikiDB.createDB();
             wikiDB.fillDB();
         }
@@ -32,6 +33,7 @@ public class Main {
 
 
         //TODO TRUNCATE URL; MAKE TINYURL
+        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
         wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
 
 
