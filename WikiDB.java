@@ -1,5 +1,6 @@
 package Marty.company;
 
+import javax.xml.transform.Result;
 import java.lang.*;
 import java.sql.*;
 import java.text.DateFormat;
@@ -58,6 +59,7 @@ public class WikiDB {
                         "CharacterID int NOT NULL primary key GENERATED ALWAYS " +
                         "AS IDENTITY (START WITH 1, INCREMENT BY 1), " +
                         "name varchar(60) not null," +
+                        "uName GENERATED ALWAYS AS (UPPER(name))," +
                         "gender varchar(10)," +
                         "genreID int, " +
                         "universeID int, " +
@@ -65,13 +67,15 @@ public class WikiDB {
                         "description varchar(500))";
 
                 String createGenreTableSQL = "CREATE TABLE Genre (GenreID INTEGER NOT NULL GENERATED ALWAYS " +
-                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), genreName varchar(60))";
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), genreName varchar(60), uGenreName GENERATED ALWAYS AS (UPPER(genreName)))";
 
                 String createUniverseTableSQL = "CREATE TABLE Universe (UniverseID int NOT NULL GENERATED ALWAYS " +
-                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), universeName varchar(60))";
+                        "AS IDENTITY (START WITH 1, INCREMENT BY 1), universeName varchar(60), uUniverseName GENERATED ALWAYS " +
+                        "AS (UPPER(universeName)))";
 
                 String createMediaTitleTableSQL = "CREATE TABLE Media (MediaID int NOT NULL GENERATED ALWAYS " +
                         "AS IDENTITY (START WITH 1, INCREMENT BY 1), mediaTitle varchar(100)," +
+                        "uMediaTitle GENERATED ALWAYS AS (UPPER(mediaTitle))," +
                         "genreID int," +
                         "universeID int," +
                         "createdBy varchar(60)," +
@@ -243,8 +247,10 @@ public class WikiDB {
                 String name = resultSet.getString("name");
                 int universeCharID = resultSet.getInt("universeID");
                 int mediaCharID = resultSet.getInt("mediaID");
+                String uName = resultSet.getString("uName");
 
-                System.out.println("Marty.company.Character Name : " + name +
+                System.out.println("Character Name : " + name +
+                        "Upper Case Name: " + uName +
                         " UniverseID : " + universeCharID +
                         " MediaID:" + mediaCharID);
             }
@@ -261,15 +267,14 @@ public class WikiDB {
     public ArrayList searchCharacter(String characterName){
         ResultSet resultSet = null;
         ArrayList<Character> characterDetails = new ArrayList<Character>();
+        String strongCharacterName = characterName.toUpperCase();
 
-
-        //TODO CHANGE = TO LIKE
         //TODO SET LOGIC IF CHARACTER NAME NOT FOUND
-        String fetchAllDataSQL = "SELECT * from CosplayCharacter where name = (?)";
+        String fetchAllDataSQL = "SELECT * from CosplayCharacter where uName like (?)";
 
         try{
             psInsert = conn.prepareStatement(fetchAllDataSQL);
-            psInsert.setString(1,characterName);
+            psInsert.setString(1, "%" + strongCharacterName + "%");
             String universeName = "";
             resultSet = psInsert.executeQuery();
             while (resultSet.next()) {
@@ -277,7 +282,7 @@ public class WikiDB {
                 String gender = resultSet.getString("gender");
                 int genreID = resultSet.getInt("genreID");
                 String genreName = getGenreName(genreID);
-                    int universeID = resultSet.getInt(5);
+                    int universeID = resultSet.getInt("universeID");
                     universeName = getUniverseName(universeID);
                 int mediaID = resultSet.getInt("mediaID");
                 String mediaTitle = getMediaTile(mediaID);
@@ -339,6 +344,39 @@ public class WikiDB {
         }
 
         return genreID;
+    }
+
+    public ArrayList<Integer> searchGenre(String genreName){
+        ResultSet resultSet = null;
+        int genreID = 0;
+        ArrayList<Integer> genreCharacters = new ArrayList<Integer>();
+
+        try {
+            String searchGenre = "select * from Genre where genreName = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setString(1, genreName);
+            resultSet = recordSearch.executeQuery();
+
+            if (resultSet.next()){
+                ResultSet secondResultSet = null;
+                genreID = resultSet.getInt("genreID");
+
+                String searchForGenreCharacters = "select * from CosplayCharacter where genreID = (?)";
+                PreparedStatement characterSearch = conn.prepareStatement(searchForGenreCharacters);
+                characterSearch.setInt(1,genreID);
+                secondResultSet = characterSearch.executeQuery();
+
+                while (secondResultSet.next()){
+                    int characterID = secondResultSet.getInt("characterID");
+                    genreCharacters.add(characterID);
+                }
+            }
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return genreCharacters;
     }
 
     public String getGenreName(int genreID){

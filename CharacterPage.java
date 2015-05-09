@@ -119,6 +119,8 @@ public class CharacterPage extends JFrame {
                         characterID = characterDetails.get(i).getCharacterID();
 
                         characterNameText =characterDetails.get(i).getCharacterName();
+                        characterNameText = characterNameText.toUpperCase();
+
                         genderText = characterDetails.get(i).getGender();
 
                         genreIDInt = characterDetails.get(i).getGenreID();
@@ -201,6 +203,8 @@ public class CharacterPage extends JFrame {
 
 
 
+                } else if (searchDropList.getSelectedItem().equals(genre)){
+
                 }
                 c.fill = GridBagConstraints.HORIZONTAL;
                 c.gridx = 0;
@@ -210,6 +214,20 @@ public class CharacterPage extends JFrame {
                 pack();
                 setVisible(true);
 
+            }
+        });
+
+        searchDropList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (searchDropList.getSelectedItem().equals(genre)){
+                    try {
+                        setVisible(false);
+                        new GenrePage(wikiDB).setVisible(true);
+                    } catch (IOException io){
+                        io.printStackTrace();
+                    }
+                }
             }
         });
 
