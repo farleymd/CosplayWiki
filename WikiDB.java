@@ -93,7 +93,7 @@ public class WikiDB {
 
                 statement.executeUpdate(createCharTableSQL);
 
-                //Marty.company.Character table print out confirmation
+                //Character table print out confirmation
                 System.out.println("Character table created");
 
                 statement.executeUpdate(createGenreTableSQL);
@@ -291,9 +291,9 @@ public class WikiDB {
                         universeID, mediaID, description));
 
 
-                System.out.println("CharacterID: " + characterID + "Marty.company.Character Name:" + characterName + " Gender: " + gender +
+                System.out.println("CharacterID: " + characterID + "Character Name:" + characterName + " Gender: " + gender +
                         " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
-                        mediaTitle + " Marty.company.Character Description: " + description);
+                        mediaTitle + " Character Description: " + description);
 
 
             }
@@ -336,9 +336,9 @@ public class WikiDB {
                         universeID, mediaID, description));
 
 
-                System.out.println("CharacterID: " + characterID + "Marty.company.Character Name:" + characterName + " Gender: " + gender +
+                System.out.println("CharacterID: " + characterID + "Character Name:" + characterName + " Gender: " + gender +
                         " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
-                        mediaTitle + " Marty.company.Character Description: " + description);
+                        mediaTitle + "Character Description: " + description);
 
 
             }
@@ -381,9 +381,9 @@ public class WikiDB {
                         universeID, mediaID, description);
 
 
-                System.out.println("CharacterID: " + characterID + "Marty.company.Character Name:" + characterName + " Gender: " + gender +
+                System.out.println("CharacterID: " + characterID + "Character Name:" + characterName + " Gender: " + gender +
                         " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
-                        mediaTitle + " Marty.company.Character Description: " + description);
+                        mediaTitle + "Character Description: " + description);
 
 
             }
@@ -763,7 +763,7 @@ public class WikiDB {
                 //get the universe name based on the ID
                 characterID = resultSet.getInt("characterID");
             } else{
-                System.out.println("Marty.company.Character could not be found.");
+                System.out.println("Character could not be found.");
 
             }
 

@@ -1,8 +1,5 @@
 package Marty.company;
 
-import Marty.company.CharacterPage;
-import Marty.company.WikiDB;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,7 +33,7 @@ public class newCharacter extends JFrame {
 
 
     public newCharacter(final WikiDB db) throws IOException {
-        super("New Marty.company.Character");
+        super("New Character");
         setContentPane(newCharacterPanel);
         pack();
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -81,7 +78,7 @@ public class newCharacter extends JFrame {
                 String description = descriptionText.getText();
 
                 if (characterName.equals("")){
-                    JOptionPane.showMessageDialog(null, "Marty.company.Character name is a required field.");
+                    JOptionPane.showMessageDialog(null, "Character name is a required field.");
                 }
 
                 if (description.equals("")){
@@ -104,7 +101,7 @@ public class newCharacter extends JFrame {
                     wikiDB.insertCharacter(characterName, gender, genre, universe,
                             media, description);
 
-                    JOptionPane.showMessageDialog(null, "Marty.company.Character added.");
+                    JOptionPane.showMessageDialog(null, "Character added.");
 
                     try {
                         setVisible(false);

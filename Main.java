@@ -1,7 +1,5 @@
 package Marty.company;
 
-import Marty.company.CharacterPage;
-
 import java.io.IOException;
 
 public class Main {
@@ -51,6 +49,9 @@ public class Main {
 
 
         //TODO TRUNCATE URL; MAKE TINYURL
+        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
+        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
+        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
         wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
         wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
 

@@ -4,6 +4,10 @@ import sun.plugin2.ipc.windows.WindowsEvent;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
@@ -46,6 +50,8 @@ public class CharacterPage extends JFrame {
     final String universe = "Universe";
     final String mediaTitle = "Title of Series";
 
+    //TODO ADD LOGIC FOR EDITING CHARACTER
+
     public CharacterPage(WikiDB db) throws IOException {
         super("Character Page");
 
@@ -83,7 +89,7 @@ public class CharacterPage extends JFrame {
                 String characterNameText = "";
                 String genderText = "";
                 int genreIDInt = 0;
-                String genreText="";
+                String genreText = "";
                 int universeIDInt = 0;
                 String universeText = "";
                 int mediaIDInt = 0;
@@ -91,13 +97,13 @@ public class CharacterPage extends JFrame {
                 String descriptionText = "";
 
 
-                if (searchDropList.getSelectedItem().equals(character)){
+                if (searchDropList.getSelectedItem().equals(character)) {
 
                     //can use an arrayList to retrieve details because number of columns
                     //will always be the same
                     ArrayList<Character> characterDetails = wikiDB.searchCharacter(searchString);
 
-                    if (characterDetails.size() ==0){
+                    if (characterDetails.size() == 0) {
 
                         int reply = JOptionPane.showConfirmDialog(null, "That character cannot be found." +
                                 "Would you like to add them?", "Title", JOptionPane.YES_NO_OPTION);
@@ -105,20 +111,19 @@ public class CharacterPage extends JFrame {
                             try {
                                 setVisible(false);
                                 new newCharacter(wikiDB).setVisible(true);
-                            } catch (IOException io){
+                            } catch (IOException io) {
                                 io.printStackTrace();
                             }
 
-                        }
-                        else {
+                        } else {
                             JOptionPane.showMessageDialog(null, "GOODBYE");
                         }
                     }
 
-                    for (int i = 0; i < characterDetails.size(); i++){
+                    for (int i = 0; i < characterDetails.size(); i++) {
                         characterID = characterDetails.get(i).getCharacterID();
 
-                        characterNameText =characterDetails.get(i).getCharacterName();
+                        characterNameText = characterDetails.get(i).getCharacterName();
                         characterNameText = characterNameText.toUpperCase();
 
                         genderText = characterDetails.get(i).getGender();
@@ -145,69 +150,90 @@ public class CharacterPage extends JFrame {
 
                     ArrayList<String> characterImages = wikiDB.searchImages(characterID);
 
-                    BufferedImage img1 = null;
-                    JPanel imagesPanel = new JPanel();
-                    imagesPanel.setLayout(new GridBagLayout());
+                    JPanel imagesPanel = displayImages(characterImages, c);
 
-                    for (int x = 0; x < characterImages.size(); x++){
-                        String imageURL = characterImages.get(x);
+//                    BufferedImage img1 = null;
+//                    JPanel imagesPanel = new JPanel();
+//                    imagesPanel.setLayout(new GridBagLayout());
+//
+//                    for (int x = 0; x < characterImages.size(); x++) {
+//
+//                            String imageURL = characterImages.get(x);
+//
+//
+//                            try {
+//                                URL url1 = new URL(imageURL);
+//
+//                                URLConnection conn1 = url1.openConnection();
+//                                conn1.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+//                                InputStream in1 = conn1.getInputStream();
+//
+//                                img1 = ImageIO.read(in1);
+//                            } catch (IOException ioe) {
+//                                ioe.printStackTrace();
+//                            }
+//
+//
+//                            if (img1 != null) {
+//
+//                                //target size is no bigger than 100 x 100
+//                                int w;
+//                                int h;
+//                                if (img1.getWidth() > img1.getHeight()) {
+//                                    //if the source was wider than it was tall, make the width 100,
+//                                    w = 100;
+//                                    //and scale the height accordingly
+//                                    h = (int) ((double) img1.getHeight() / img1.getWidth() * 100.0);
+//                                } else {
+//                                    //otherwise, vice versa (and if w == h, then they are both 100)
+//                                    h = 100;
+//                                    int myH = img1.getHeight();
+//                                    int myW = img1.getWidth();
+//                                    w = (int) ((double) img1.getWidth() / img1.getHeight() * 100.0);
+//
+//                                    w= w*3;
+//                                    h = h*3;
+//                                }
+//
+//                                BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+//                                Graphics2D g2 = img2.createGraphics();
+//                                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+//                                g2.drawImage(img1, 0, 0, w, h, null);
+//                                g2.dispose();
+//
+//                                c.fill = GridBagConstraints.HORIZONTAL;
+//                                c.gridx = x%4;
+//                                c.gridy = x/4;
+//
+//                                Border b1 = new BevelBorder(
+//                                        BevelBorder.LOWERED, Color.LIGHT_GRAY, Color.DARK_GRAY);
+//                                Border b2 = new LineBorder(Color.GRAY, 12);
+//                                Border bTemp = new CompoundBorder(b1,b2);
+//
+//
+//                                JLabel cIcon = new JLabel(new ImageIcon(img2));
+//
+//                                cIcon.setBorder(bTemp);
+//
+//
+//                                imagesPanel.add(cIcon, c);
+//
+//                            }
+//                        }
 
-                        //TODO MAKE IMAGE METHOD
 
-                        try
-                        {
-                            URL url1 = new URL(imageURL);
+                        c.fill = GridBagConstraints.HORIZONTAL;
+                        c.gridx = 0;
+                        c.gridy = 6;
 
-                            URLConnection conn1 = url1.openConnection();
-                            conn1.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-                            InputStream in1 = conn1.getInputStream();
+                        rootPanel.add(imagesPanel, c);
+                        rootPanel.repaint();
 
-                            img1 = ImageIO.read(in1);
-                        } catch (IOException ioe)
-                        {
-                            ioe.printStackTrace();
-                        }
-
-
-                    }
-
-                    int w;
-                    int h;
-                    if (img1.getWidth() > img1.getHeight()) {
-                        //if the source was wider than it was tall, make the width 100,
-                        w = 100;
-                        //and scale the height accordingly
-                        h = (int) ((double)img1.getHeight() / img1.getWidth() * 100.0);
-                    } else {
-                        //otherwise, vice versa (and if w == h, then they are both 100)
-                        h = 100;
-                        w = (int) ((double)img1.getWidth() / img1.getHeight() * 100.0);
-                    }
-                    BufferedImage img2 = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
-                    Graphics2D g2 = img2.createGraphics();
-                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                    g2.drawImage(img1,0,0,w,h,null);
-                    g2.dispose();
-
-                    JLabel cIcon = new JLabel(new ImageIcon(img2));
-
-
-                    rootPanel.add(cIcon,c);
-                    rootPanel.repaint();
-
-
-
-                } else if (searchDropList.getSelectedItem().equals(genre)){
+                        setContentPane(rootPanel);
+                        pack();
+                        setVisible(true);
 
                 }
-                c.fill = GridBagConstraints.HORIZONTAL;
-                c.gridx = 0;
-                c.gridy = 6;
-
-                setContentPane(rootPanel);
-                pack();
-                setVisible(true);
-
             }
         });
 
@@ -221,6 +247,10 @@ public class CharacterPage extends JFrame {
                     } catch (IOException io){
                         io.printStackTrace();
                     }
+                } else if (searchDropList.getSelectedItem().equals(universe)){
+                    //TODO ADD UNIVERSE PAGE
+                } else if (searchDropList.getSelectedItem().equals(mediaTitle)){
+                    //TODO ADD MEDIA TITLE PAGE
                 }
             }
         });
@@ -447,6 +477,79 @@ public class CharacterPage extends JFrame {
     universeName.setText(universeText);
     titleName.setText(mediaText);
     characterDescription.setText(descriptionText);
+
+    }
+
+    private JPanel displayImages(ArrayList<String> characterImages, GridBagConstraints c){
+        BufferedImage img1 = null;
+        JPanel imagesPanel = new JPanel();
+        imagesPanel.setLayout(new GridBagLayout());
+
+        for (int x = 0; x < characterImages.size(); x++) {
+
+            String imageURL = characterImages.get(x);
+
+            try {
+                URL url1 = new URL(imageURL);
+
+                URLConnection conn1 = url1.openConnection();
+                conn1.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
+                InputStream in1 = conn1.getInputStream();
+
+                img1 = ImageIO.read(in1);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+
+
+            if (img1 != null) {
+
+                //target size is no bigger than 100 x 100
+                int w;
+                int h;
+                if (img1.getWidth() > img1.getHeight()) {
+                    //if the source was wider than it was tall, make the width 100,
+                    w = 100;
+                    //and scale the height accordingly
+                    h = (int) ((double) img1.getHeight() / img1.getWidth() * 100.0);
+                } else {
+                    //otherwise, vice versa (and if w == h, then they are both 100)
+                    h = 100;
+                    int myH = img1.getHeight();
+                    int myW = img1.getWidth();
+                    w = (int) ((double) img1.getWidth() / img1.getHeight() * 100.0);
+
+                    w= w*3;
+                    h = h*3;
+                }
+
+                BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2 = img2.createGraphics();
+                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2.drawImage(img1, 0, 0, w, h, null);
+                g2.dispose();
+
+                c.fill = GridBagConstraints.HORIZONTAL;
+                c.gridx = x%4;
+                c.gridy = x/4;
+
+                Border b1 = new BevelBorder(
+                        BevelBorder.LOWERED, Color.LIGHT_GRAY, Color.DARK_GRAY);
+                Border b2 = new LineBorder(Color.GRAY, 12);
+                Border bTemp = new CompoundBorder(b1,b2);
+
+
+                JLabel cIcon = new JLabel(new ImageIcon(img2));
+
+                cIcon.setBorder(bTemp);
+
+
+                imagesPanel.add(cIcon, c);
+
+            }
+        }
+
+        return imagesPanel;
 
     }
 
