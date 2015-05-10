@@ -189,12 +189,6 @@ public class CharacterPage extends JFrame {
                     g2.drawImage(img1,0,0,w,h,null);
                     g2.dispose();
 
-
-
-
-
-
-
                     JLabel cIcon = new JLabel(new ImageIcon(img2));
 
 
@@ -424,6 +418,35 @@ public class CharacterPage extends JFrame {
         rootPanel.add(quitButton,c);
 
 
+
+    }
+
+    public void showCharacter(Character character){
+
+        int characterID = character.getCharacterID();
+
+        String characterNameText =character.getCharacterName();
+
+        String genderText = character.getGender();
+
+        int genreIDInt = character.getGenreID();
+        String genreText = wikiDB.getGenreName(genreIDInt);
+
+        int universeIDInt = character.getUniverseID();
+        String universeText = wikiDB.getUniverseName(universeIDInt);
+
+        int mediaIDInt = character.getMediaID();
+        String mediaText = wikiDB.getMediaTile(mediaIDInt);
+
+        String descriptionText = character.getDescription();
+
+
+    characterName.setText(characterNameText);
+    genderName.setText(genderText);
+    genreName.setText(genreText);
+    universeName.setText(universeText);
+    titleName.setText(mediaText);
+    characterDescription.setText(descriptionText);
 
     }
 

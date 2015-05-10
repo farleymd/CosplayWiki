@@ -30,6 +30,7 @@ public class GenrePage extends JFrame {
     private JList <Character> genreList;
     private JLabel genreNameLabel;
     private JTree genreTree;
+    private JButton viewCharacterButton;
 
     final String character = "Character";
     final String genre = "Genre";
@@ -64,6 +65,8 @@ public class GenrePage extends JFrame {
         genreTree.setModel(null);
         genreTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 
+        viewCharacterButton.setVisible(false);
+
 
         searchButton.addActionListener(new ActionListener() {
             @Override
@@ -72,6 +75,8 @@ public class GenrePage extends JFrame {
 
                 ArrayList<Integer> genreCharacterIDs = wikiDB.searchGenre(searchString);
                 HashMap<String, String> hash = new HashMap<String, String>();
+                HashMap<String, String> allHash = new HashMap<String, String>();
+                HashMap<String, String> mediaHash = new HashMap<String, String>();
                 String genreText = "";
 
 
@@ -82,7 +87,7 @@ public class GenrePage extends JFrame {
 
                         int genreIDInt = genreCharacter.getGenreID();
                         genreText = wikiDB.getGenreName(genreIDInt);
-                    genreNameLabel.setText(genreText);
+                        //genreNameLabel.setText(genreText);
 
                         int universeIDInt = genreCharacter.getUniverseID();
                         String universeText = wikiDB.getUniverseName(universeIDInt);
@@ -93,10 +98,12 @@ public class GenrePage extends JFrame {
                         GenrePage.this.characterListModel.addElement(genreCharacter);
 
                     hash.put(mediaText, universeText);
+                    allHash.put(universeText, genreText);
+                    mediaHash.put(universeText, mediaText);
 
                         }
 
-                designAUniverseTree(genreText,hash);
+                designAUniverseTree(genreText,hash, allHash, mediaHash);
 
                     }
 
@@ -106,22 +113,17 @@ public class GenrePage extends JFrame {
             @Override
             public void valueChanged(TreeSelectionEvent e) {
                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) genreTree.getLastSelectedPathComponent();
-                String genreName = genreNameLabel.getText();
-
-
                 if (node==null) {
                     return;
                 }
 
                 String nodeName = node.toString();
-                String nodeParent = node.getParent().toString();
+                int nodeChildCount = node.getChildCount();
 
-                if (nodeParent.equals(genreName)){
-                    int universeID = wikiDB.getUniverseID(nodeName);
-                    displayUniverse(nodeName);
-                } else {
-                    int mediaID = wikiDB.getMediaID(nodeName);
+                if (nodeChildCount == 0){
                     displayMedia(nodeName);
+                } else {
+                    displayUniverse(nodeName);
                 }
             }
         });
@@ -131,7 +133,26 @@ public class GenrePage extends JFrame {
         genreList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
+                viewCharacterButton.setVisible(true);
+            }
+        });
+
+        viewCharacterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
                 Character selectedCharacter = GenrePage.this.genreList.getSelectedValue();
+                try{
+                    setVisible(false);
+                    CharacterPage characterPage = new CharacterPage(wikiDB);
+                    characterPage.showCharacter(selectedCharacter);
+                    characterPage.setVisible(true);
+
+                } catch (IOException io){
+                    io.printStackTrace();
+                }
+
+
             }
         });
 
@@ -163,27 +184,61 @@ public class GenrePage extends JFrame {
     }
 
 
-    private void designAUniverseTree(String genreName, HashMap hash){
-        DefaultMutableTreeNode genreMainTree = new DefaultMutableTreeNode(genreName);
+    private void designAUniverseTree(String genreName, HashMap hash, HashMap hashAll, HashMap mediaHash) {
+
+        //TODO FIX MEDIA DUPLICATION ISSUE
+        DefaultMutableTreeNode genreMainTree = new DefaultMutableTreeNode("Genre");
+
+        DefaultMutableTreeNode genreNode = new DefaultMutableTreeNode(genreName);
         DefaultMutableTreeNode mediaTitleNode = new DefaultMutableTreeNode("");
         DefaultMutableTreeNode universeTitleNode = new DefaultMutableTreeNode("");
+        Map<String, DefaultMutableTreeNode> mediaToNode = new HashMap<String, DefaultMutableTreeNode>();
         Map<String, DefaultMutableTreeNode> categoryToNode = new HashMap<String, DefaultMutableTreeNode>();
+        Map<String, DefaultMutableTreeNode> genreToNode = new HashMap<String, DefaultMutableTreeNode>();
 
 
-        ArrayList<Map.Entry<String,String>> copy = new ArrayList<Map.Entry<String, String>>();
+        ArrayList<Map.Entry<String, String>> copy2 = new ArrayList<Map.Entry<String, String>>();
+        copy2.addAll(hashAll.entrySet());
+
+        ArrayList<Map.Entry<String, String>> copy = new ArrayList<Map.Entry<String, String>>();
         copy.addAll(hash.entrySet());
 
-        for (Map.Entry<String,String> e : copy){
-            universeTitleNode = categoryToNode.get(e.getValue());
-            if (universeTitleNode == null ){
-                universeTitleNode = new DefaultMutableTreeNode(e.getValue());
-                categoryToNode.put(e.getValue(), universeTitleNode);
-                genreMainTree.add(universeTitleNode);
-            }
-            mediaTitleNode = new DefaultMutableTreeNode(e.getKey());
-            universeTitleNode.add(mediaTitleNode);
-        }
+        ArrayList<Map.Entry<String, String>> copy3 = new ArrayList<Map.Entry<String, String>>();
+        copy3.addAll(mediaHash.entrySet());
 
+
+        for (Map.Entry<String, String> u : copy2) {
+            genreNode = genreToNode.get(u.getValue());
+            if (genreNode == null) {
+                genreNode = new DefaultMutableTreeNode(u.getValue());
+                genreToNode.put(u.getValue(), genreNode);
+                genreMainTree.add(genreNode);
+            }
+            universeTitleNode = new DefaultMutableTreeNode(u.getKey());
+            categoryToNode.put(u.getKey(), universeTitleNode);
+            genreNode.add(universeTitleNode);
+
+            for (Map.Entry<String, String> e : copy) {
+                universeTitleNode = categoryToNode.get(e.getValue());
+                if (universeTitleNode == null) {
+                    universeTitleNode = new DefaultMutableTreeNode(e.getValue());
+                    categoryToNode.put(e.getValue(), universeTitleNode);
+                }
+                mediaTitleNode = new DefaultMutableTreeNode(e.getKey());
+                mediaToNode.put(e.getKey(), mediaTitleNode);
+                universeTitleNode.add(mediaTitleNode);
+
+                for (Map.Entry<String, String> m : copy3) {
+                    mediaTitleNode = mediaToNode.get(m.getValue());
+                    if (mediaTitleNode == null){
+                        mediaTitleNode = new DefaultMutableTreeNode(m.getValue());
+                        mediaToNode.put(m.getValue(), mediaTitleNode);
+                        universeTitleNode.add(mediaTitleNode);
+                    }
+                }
+            }
+
+        }
         genreTree.setModel(new DefaultTreeModel(genreMainTree));
     }
 
@@ -196,24 +251,6 @@ public class GenrePage extends JFrame {
             int characterID = universeCharacterIDs.get(i);
 
             Character genreCharacter = wikiDB.returnCharacter(characterID);
-
-            characterID = genreCharacter.getCharacterID();
-
-            String characterName = genreCharacter.getCharacterName();
-
-
-            String genderText = genreCharacter.getGender();
-
-            int genreIDInt = genreCharacter.getGenreID();
-
-            int universeIDInt = genreCharacter.getUniverseID();
-            String universeText = wikiDB.getUniverseName(universeIDInt);
-
-            int mediaIDInt = genreCharacter.getMediaID();
-            String mediaText = wikiDB.getMediaTile(mediaIDInt);
-
-            String descriptionText = genreCharacter.getDescription();
-
 
             GenrePage.this.characterListModel.addElement(genreCharacter);
 

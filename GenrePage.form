@@ -59,19 +59,32 @@
           <text value="Quit"/>
         </properties>
       </component>
-      <component id="8157b" class="javax.swing.JTree" binding="genreTree">
+      <scrollpane id="6f0b7">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="50"/>
-          </grid>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="8157b" class="javax.swing.JTree" binding="genreTree">
+            <constraints/>
+            <properties>
+              <rootVisible value="true"/>
+            </properties>
+            <clientProperties>
+              <JTree.lineStyle class="java.lang.String" value=""/>
+              <html.disable class="java.lang.Boolean" value="false"/>
+            </clientProperties>
+          </component>
+        </children>
+      </scrollpane>
+      <component id="cfea3" class="javax.swing.JButton" binding="viewCharacterButton" default-binding="true">
+        <constraints>
+          <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <rootVisible value="true"/>
+          <text value="View Character"/>
         </properties>
-        <clientProperties>
-          <JTree.lineStyle class="java.lang.String" value=""/>
-          <html.disable class="java.lang.Boolean" value="false"/>
-        </clientProperties>
       </component>
     </children>
   </grid>

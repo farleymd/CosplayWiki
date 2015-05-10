@@ -535,8 +535,8 @@ public class WikiDB {
         int universeID = 0;
 
         try{
-            String searchGenre = "select * from Universe where universeName = (?)";
-            PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            String searchUniverse = "select * from Universe where universeName = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(searchUniverse);
             recordSearch.setString(1,universe);
             resultSet = recordSearch.executeQuery();
 
@@ -545,8 +545,15 @@ public class WikiDB {
                 universeID = resultSet.getInt("universeID");
             } else{
                 //if that genre doesn't exist, set the genre to Other's genreID
-                String otherSearch ="select * from Universe where universeName = 'Other'";
-                PreparedStatement otherDecision = conn.prepareStatement(otherSearch);
+                String addUniverse = "INSERT INTO Universe(universeName) VALUES(?)";
+                psInsert = conn.prepareStatement(addUniverse);
+
+                psInsert.setString(1, universe);
+                psInsert.execute();
+
+                String otherSearch = "select * from Universe where universeName = (?)";
+                PreparedStatement otherDecision= conn.prepareStatement(otherSearch);
+                otherDecision.setString(1,universe);
                 secondResultSet = otherDecision.executeQuery();
 
                 if (secondResultSet.next()){
@@ -647,7 +654,6 @@ public class WikiDB {
                 //get the genreID of the genre entered by the user for this character
                 mediaID = resultSet.getInt("mediaID");
             } else{
-                //if that genre doesn't exist, set the genre to Other's genreID
                 String addMediaTitle = "INSERT INTO Media(mediaTitle) VALUES (?)";
                 psInsert = conn.prepareStatement(addMediaTitle);
 

@@ -20,6 +20,8 @@ public class Main {
             wikiDB.fillDB();
         }
 
+        wikiDB.insertCharacter("10th Doctor", "Male", "Television", "Doctor Who", "Doctor Who Series 2-4", "Allons-y!");
+
         wikiDB.insertCharacter("Sailor Moon", "Female", "Anime", "Sailor Moon", "Sailor Moon SuperS", "This is a test.");
         //wikiDB.searchCharacter("Sailor Moon");
 
@@ -36,11 +38,14 @@ public class Main {
 
         wikiDB.insertCharacter("Queen Elsa", "Female", "Movies", "Disney", "Frozen", "Has magical ice powers.");
 
-        wikiDB.insertCharacter("10th Doctor", "Male", "Television", "Doctor Who", "Doctor Who", "Allons-y!");
 
         wikiDB.insertCharacter("Iron Man", "Male", "Movies", "Marvel", "The Avengers", "Billionare genius Tony Stark");
 
         wikiDB.insertCharacter("Cloud Strike", "Male", "Video Games", "Final Fantasy", "Final Fantasy 7", "Ex-Soldier, Big Sword");
+
+        wikiDB.insertCharacter("Ariel", "Female", "Movies", "Disney", "Little Mermaid", "Wants to be human.");
+
+        wikiDB.insertCharacter("12th Doctor", "Male", "Television", "Doctor Who", "Doctor Who Series 8", "Attack eyebrows");
 
         int characterID = wikiDB.getCharacterID("Sailor Moon");
 
