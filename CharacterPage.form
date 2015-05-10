@@ -29,7 +29,7 @@
           </grid>
         </constraints>
         <properties>
-          <text value=""/>
+          <text value="Search for a character by common name"/>
         </properties>
       </component>
       <component id="1e295" class="javax.swing.JLabel" binding="titleLabel">

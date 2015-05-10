@@ -67,6 +67,12 @@ public class GenrePage extends JFrame {
 
         viewCharacterButton.setVisible(false);
 
+        Font font = new Font("Courier", Font.ITALIC,12);
+
+        searchText.setFont(font);
+
+        searchText.setText("Search for a genre, EX television, movies, comics.");
+
 
         searchButton.addActionListener(new ActionListener() {
             @Override

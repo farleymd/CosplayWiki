@@ -81,6 +81,14 @@ public class CharacterPage extends JFrame {
         titleName.setText("");
         genreName.setText("");
 
+        Font font = new Font("Courier", Font.ITALIC,12);
+
+        searchText.setFont(font);
+
+        characterName.setText("");
+
+        editCharacterButton.setVisible(false);
+
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -106,7 +114,7 @@ public class CharacterPage extends JFrame {
                     if (characterDetails.size() == 0) {
 
                         int reply = JOptionPane.showConfirmDialog(null, "That character cannot be found." +
-                                "Would you like to add them?", "Title", JOptionPane.YES_NO_OPTION);
+                                "Would you like to add them?", "New Character?", JOptionPane.YES_NO_OPTION);
                         if (reply == JOptionPane.YES_OPTION) {
                             try {
                                 setVisible(false);
@@ -119,6 +127,8 @@ public class CharacterPage extends JFrame {
                             JOptionPane.showMessageDialog(null, "GOODBYE");
                         }
                     }
+
+                    editCharacterButton.setVisible(true);
 
                     for (int i = 0; i < characterDetails.size(); i++) {
                         characterID = characterDetails.get(i).getCharacterID();
@@ -151,75 +161,6 @@ public class CharacterPage extends JFrame {
                     ArrayList<String> characterImages = wikiDB.searchImages(characterID);
 
                     JPanel imagesPanel = displayImages(characterImages, c);
-
-//                    BufferedImage img1 = null;
-//                    JPanel imagesPanel = new JPanel();
-//                    imagesPanel.setLayout(new GridBagLayout());
-//
-//                    for (int x = 0; x < characterImages.size(); x++) {
-//
-//                            String imageURL = characterImages.get(x);
-//
-//
-//                            try {
-//                                URL url1 = new URL(imageURL);
-//
-//                                URLConnection conn1 = url1.openConnection();
-//                                conn1.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-//                                InputStream in1 = conn1.getInputStream();
-//
-//                                img1 = ImageIO.read(in1);
-//                            } catch (IOException ioe) {
-//                                ioe.printStackTrace();
-//                            }
-//
-//
-//                            if (img1 != null) {
-//
-//                                //target size is no bigger than 100 x 100
-//                                int w;
-//                                int h;
-//                                if (img1.getWidth() > img1.getHeight()) {
-//                                    //if the source was wider than it was tall, make the width 100,
-//                                    w = 100;
-//                                    //and scale the height accordingly
-//                                    h = (int) ((double) img1.getHeight() / img1.getWidth() * 100.0);
-//                                } else {
-//                                    //otherwise, vice versa (and if w == h, then they are both 100)
-//                                    h = 100;
-//                                    int myH = img1.getHeight();
-//                                    int myW = img1.getWidth();
-//                                    w = (int) ((double) img1.getWidth() / img1.getHeight() * 100.0);
-//
-//                                    w= w*3;
-//                                    h = h*3;
-//                                }
-//
-//                                BufferedImage img2 = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-//                                Graphics2D g2 = img2.createGraphics();
-//                                g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//                                g2.drawImage(img1, 0, 0, w, h, null);
-//                                g2.dispose();
-//
-//                                c.fill = GridBagConstraints.HORIZONTAL;
-//                                c.gridx = x%4;
-//                                c.gridy = x/4;
-//
-//                                Border b1 = new BevelBorder(
-//                                        BevelBorder.LOWERED, Color.LIGHT_GRAY, Color.DARK_GRAY);
-//                                Border b2 = new LineBorder(Color.GRAY, 12);
-//                                Border bTemp = new CompoundBorder(b1,b2);
-//
-//
-//                                JLabel cIcon = new JLabel(new ImageIcon(img2));
-//
-//                                cIcon.setBorder(bTemp);
-//
-//
-//                                imagesPanel.add(cIcon, c);
-//
-//                            }
-//                        }
 
 
                         c.fill = GridBagConstraints.HORIZONTAL;
@@ -291,25 +232,6 @@ public class CharacterPage extends JFrame {
 
                 wikiDB.insertImage(characterID, author.getText(), imageURL.getText());
 
-            }
-        });
-
-        searchDropList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Font font = new Font("Courier", Font.ITALIC,12);
-
-                searchText.setFont(font);
-
-                if (searchDropList.getSelectedItem().equals(character)){
-                    searchText.setText("Search for a character by name.");
-                } else if (searchDropList.getSelectedItem().equals(genre)){
-                    searchText.setText("Search for genre, EX television, movies, comic.");
-                } else if (searchDropList.getSelectedItem().equals(universe)){
-                    searchText.setText("Search for universe, EX Marvel, Harry Potter.");
-                } else if (searchDropList.getSelectedItem().equals(mediaTitle)){
-                    searchText.setText("Search for title of series, EX The Avengers.");
-                }
             }
         });
 
