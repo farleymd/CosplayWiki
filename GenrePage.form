@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="Marty.company.GenrePage">
-  <grid id="27dc6" binding="genrePanel" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="genrePanel" layout-manager="GridLayoutManager" row-count="4" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
@@ -30,7 +30,7 @@
           <text value="Search"/>
         </properties>
       </component>
-      <component id="9c0ec" class="javax.swing.JLabel">
+      <component id="9c0ec" class="javax.swing.JLabel" binding="genreNameLabel">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -40,12 +40,12 @@
       </component>
       <scrollpane id="11de9" binding="genreScroll">
         <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="27a8d" class="javax.swing.JList" binding="genreList">
+          <component id="65e13" class="javax.swing.JList" binding="genreList">
             <constraints/>
             <properties/>
           </component>
@@ -53,11 +53,25 @@
       </scrollpane>
       <component id="fcea8" class="javax.swing.JButton" binding="quitButton" default-binding="true">
         <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Quit"/>
         </properties>
+      </component>
+      <component id="8157b" class="javax.swing.JTree" binding="genreTree">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="50"/>
+          </grid>
+        </constraints>
+        <properties>
+          <rootVisible value="true"/>
+        </properties>
+        <clientProperties>
+          <JTree.lineStyle class="java.lang.String" value=""/>
+          <html.disable class="java.lang.Boolean" value="false"/>
+        </clientProperties>
       </component>
     </children>
   </grid>

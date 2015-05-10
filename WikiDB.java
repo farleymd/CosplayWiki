@@ -45,7 +45,6 @@ public class WikiDB {
 
     }
 
-
     public void createDB() {
 
         try {
@@ -149,7 +148,7 @@ public class WikiDB {
             psInsert.execute();
             psInsert.setString(1,"Movies");
             psInsert.execute();
-            psInsert.setString(1,"VideoGames");
+            psInsert.setString(1,"Video Games");
             psInsert.execute();
             psInsert.setString(1,"Anime");
             psInsert.execute();
@@ -309,6 +308,96 @@ public class WikiDB {
 
     }
 
+    public ArrayList searchCharacterID(int characterID){
+        ResultSet resultSet = null;
+        ArrayList<Character> characterDetails = new ArrayList<Character>();
+
+
+
+        String fetchAllDataSQL = "SELECT * from CosplayCharacter where characterID = (?)";
+
+        try{
+            psInsert = conn.prepareStatement(fetchAllDataSQL);
+            psInsert.setInt(1,characterID);
+            String universeName = "";
+            resultSet = psInsert.executeQuery();
+            while (resultSet.next()) {
+                String characterName = resultSet.getString("name");
+                String gender = resultSet.getString("gender");
+                int genreID = resultSet.getInt("genreID");
+                String genreName = getGenreName(genreID);
+                int universeID = resultSet.getInt("universeID");
+                universeName = getUniverseName(universeID);
+                int mediaID = resultSet.getInt("mediaID");
+                String mediaTitle = getMediaTile(mediaID);
+                String description = resultSet.getString("description");
+
+                characterDetails.add(new Character(characterID, characterName, gender, genreID,
+                        universeID, mediaID, description));
+
+
+                System.out.println("CharacterID: " + characterID + "Marty.company.Character Name:" + characterName + " Gender: " + gender +
+                        " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
+                        mediaTitle + " Marty.company.Character Description: " + description);
+
+
+            }
+
+            resultSet.close();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return characterDetails;
+
+    }
+
+    public Character returnCharacter(int characterID){
+        ResultSet resultSet = null;
+        ArrayList<Character> characterDetails = new ArrayList<Character>();
+        Character character = new Character();
+
+
+        String fetchAllDataSQL = "SELECT * from CosplayCharacter where characterID = (?)";
+
+        try{
+            psInsert = conn.prepareStatement(fetchAllDataSQL);
+            psInsert.setInt(1,characterID);
+            String universeName = "";
+            resultSet = psInsert.executeQuery();
+            while (resultSet.next()) {
+                String characterName = resultSet.getString("name");
+                String gender = resultSet.getString("gender");
+                int genreID = resultSet.getInt("genreID");
+                String genreName = getGenreName(genreID);
+                int universeID = resultSet.getInt("universeID");
+                universeName = getUniverseName(universeID);
+                int mediaID = resultSet.getInt("mediaID");
+                String mediaTitle = getMediaTile(mediaID);
+                String description = resultSet.getString("description");
+
+                character = new Character(characterID, characterName, gender, genreID,
+                        universeID, mediaID, description);
+
+
+                System.out.println("CharacterID: " + characterID + "Marty.company.Character Name:" + characterName + " Gender: " + gender +
+                        " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
+                        mediaTitle + " Marty.company.Character Description: " + description);
+
+
+            }
+
+            resultSet.close();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return character;
+
+    }
+
     public int getGenreID(String genre){
         ResultSet resultSet = null;
         ResultSet secondResultSet = null;
@@ -351,29 +440,63 @@ public class WikiDB {
         int genreID = 0;
         ArrayList<Integer> genreCharacters = new ArrayList<Integer>();
 
-        try {
-            String searchGenre = "select * from Genre where genreName = (?)";
-            PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
-            recordSearch.setString(1, genreName);
-            resultSet = recordSearch.executeQuery();
+        if (!genreName.equals("")) {
+            try {
+                String searchGenre = "select * from Genre where genreName = (?)";
+                PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+                recordSearch.setString(1, genreName);
+                resultSet = recordSearch.executeQuery();
 
-            if (resultSet.next()){
-                ResultSet secondResultSet = null;
-                genreID = resultSet.getInt("genreID");
+                if (resultSet.next()) {
+                    ResultSet secondResultSet = null;
+                    genreID = resultSet.getInt("genreID");
 
-                String searchForGenreCharacters = "select * from CosplayCharacter where genreID = (?)";
-                PreparedStatement characterSearch = conn.prepareStatement(searchForGenreCharacters);
-                characterSearch.setInt(1,genreID);
-                secondResultSet = characterSearch.executeQuery();
+                    String searchForGenreCharacters = "select * from CosplayCharacter where genreID = (?) order by name";
+                    PreparedStatement characterSearch = conn.prepareStatement(searchForGenreCharacters);
+                    characterSearch.setInt(1, genreID);
+                    secondResultSet = characterSearch.executeQuery();
 
-                while (secondResultSet.next()){
-                    int characterID = secondResultSet.getInt("characterID");
-                    genreCharacters.add(characterID);
+                    while (secondResultSet.next()) {
+                        int characterID = secondResultSet.getInt("characterID");
+                        genreCharacters.add(characterID);
+                    }
+
+                    secondResultSet.close();
                 }
-            }
 
-        } catch (SQLException se){
-            se.printStackTrace();
+                resultSet.close();
+
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        } else {
+            try {
+                String searchGenre = "select * from Genre";
+                PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+                resultSet = recordSearch.executeQuery();
+
+                while (resultSet.next()) {
+                    ResultSet secondResultSet = null;
+                    genreID = resultSet.getInt("genreID");
+
+                    String searchForGenreCharacters = "select * from CosplayCharacter where genreID IN (?) order by name";
+                    PreparedStatement characterSearch = conn.prepareStatement(searchForGenreCharacters);
+                    characterSearch.setInt(1, genreID);
+                    secondResultSet = characterSearch.executeQuery();
+
+                    while (secondResultSet.next()) {
+                        int characterID = secondResultSet.getInt("characterID");
+                        genreCharacters.add(characterID);
+                    }
+
+                    secondResultSet.close();
+                }
+
+                resultSet.close();
+
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
         }
 
         return genreCharacters;
@@ -405,7 +528,6 @@ public class WikiDB {
 
         return genreName;
     }
-
 
     public int getUniverseID(String universe){
         ResultSet resultSet = null;
@@ -471,6 +593,44 @@ public class WikiDB {
         return universeName;
 
     }
+
+    public ArrayList<Integer> searchUniverse(String universeName){
+        ResultSet resultSet = null;
+        int universeID = 0;
+        ArrayList<Integer> universeCharacters = new ArrayList<Integer>();
+
+        try {
+            String searchUniverse = "select * from Universe where universeName = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(searchUniverse);
+            recordSearch.setString(1, universeName);
+            resultSet = recordSearch.executeQuery();
+
+            if (resultSet.next()){
+                ResultSet secondResultSet = null;
+                universeID = resultSet.getInt("universeID");
+
+                String searchForUniverseCharacters = "select * from CosplayCharacter where universeID = (?)";
+                PreparedStatement characterSearch = conn.prepareStatement(searchForUniverseCharacters);
+                characterSearch.setInt(1,universeID);
+                secondResultSet = characterSearch.executeQuery();
+
+                while (secondResultSet.next()){
+                    int characterID = secondResultSet.getInt("characterID");
+                    universeCharacters.add(characterID);
+                }
+
+                secondResultSet.close();
+            }
+
+            resultSet.close();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return universeCharacters;
+    }
+
 
     public int getMediaID(String mediaTitle){
         ResultSet resultSet = null;
@@ -543,6 +703,44 @@ public class WikiDB {
         }
 
         return mediaTitle;
+    }
+
+    public ArrayList<Integer> searchMediaTitle(String mediaTitle){
+        ResultSet resultSet = null;
+        int mediaID = 0;
+        ArrayList<Integer> mediaCharacters = new ArrayList<Integer>();
+
+        try{
+            String searchMedia ="select * from Media where mediaTitle = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(searchMedia);
+            recordSearch.setString(1,mediaTitle);
+            resultSet = recordSearch.executeQuery();
+
+            if (resultSet.next()){
+                ResultSet secondResultSet = null;
+                mediaID = resultSet.getInt("mediaID");
+
+                String searchForMediaCharacters = "select * from CosplayCharacter where mediaID = (?)";
+                PreparedStatement characterSearch = conn.prepareStatement(searchForMediaCharacters);
+                characterSearch.setInt(1,mediaID);
+                secondResultSet = characterSearch.executeQuery();
+
+                while (secondResultSet.next()){
+                    int characterID = secondResultSet.getInt("characterID");
+                    mediaCharacters.add(characterID);
+                }
+
+                secondResultSet.close();
+            }
+
+            resultSet.close();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+
+        return mediaCharacters;
     }
 
     public int getCharacterID(String characterName){

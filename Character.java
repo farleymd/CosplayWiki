@@ -25,6 +25,11 @@ public class Character {
         this.description = description;
     }
 
+    public Character(){
+
+    }
+
+
     public int getCharacterID(){
         return characterID;
     }
@@ -51,6 +56,10 @@ public class Character {
 
     public String getDescription(){
         return description;
+    }
+
+    public String toString(){
+        return(this.characterName + "\n");
     }
 
 
