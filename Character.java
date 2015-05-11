@@ -6,6 +6,8 @@ import java.util.StringTokenizer;
  * Created by marty.farley on 5/3/2015.
  */
 public class Character {
+    private WikiDB wikiDB;
+
     private int characterID;
     private String characterName;
     private String gender;
@@ -46,6 +48,7 @@ public class Character {
         return genreID;
     }
 
+
     public int getUniverseID(){
         return universeID;
     }
@@ -53,6 +56,7 @@ public class Character {
     public int getMediaID(){
         return mediaID;
     }
+
 
     public String getDescription(){
         return description;
@@ -62,5 +66,13 @@ public class Character {
         return(this.characterName + "\n");
     }
 
+    public String toString(int characterInts){
+        return(this.characterName + " = " + "\n" +
+                this.gender + " = " + "\n" +
+                this.genreID + " = " + "\n" +
+                this.universeID + " = " + "\n" +
+                this.mediaID + " = " + "\n" +
+                this.description);
+    }
 
 }

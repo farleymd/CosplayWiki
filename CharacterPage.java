@@ -13,6 +13,8 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -89,6 +91,12 @@ public class CharacterPage extends JFrame {
 
         editCharacterButton.setVisible(false);
 
+        FileWriter openWriter = new FileWriter("addCharacters.txt");
+        final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
+
+
+
+
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -149,6 +157,10 @@ public class CharacterPage extends JFrame {
 
                         descriptionText = characterDetails.get(i).getDescription();
 
+                        Character genreCharacter = wikiDB.returnCharacter(characterID);
+
+                        addCharactersToFile(genreCharacter, openBufWriter);
+
                     }
 
                     characterName.setText(characterNameText);
@@ -173,6 +185,7 @@ public class CharacterPage extends JFrame {
                         setContentPane(rootPanel);
                         pack();
                         setVisible(true);
+
 
                 }
             }
@@ -255,6 +268,12 @@ public class CharacterPage extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 wikiDB.deleteDB();
                 wikiDB.closeDB();
+
+                try {
+                    openBufWriter.close();
+                } catch (IOException io){
+                    io.printStackTrace();
+                }
                 System.exit(0);
             }
         });
@@ -263,21 +282,6 @@ public class CharacterPage extends JFrame {
         pack();
         setVisible(true);
     }
-
-    public static BufferedImage getScaledImage(BufferedImage image, int width, int height) throws IOException {
-        int imageWidth  = image.getWidth();
-        int imageHeight = image.getHeight();
-
-        double scaleX = (double)width/imageWidth;
-        double scaleY = (double)height/imageHeight;
-        AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
-        AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
-
-        return bilinearScaleOp.filter(
-                image,
-                new BufferedImage(width, height, image.getType()));
-    }
-
 
 
     protected void buildUI(GridBagConstraints c){
@@ -400,6 +404,23 @@ public class CharacterPage extends JFrame {
     titleName.setText(mediaText);
     characterDescription.setText(descriptionText);
 
+        ArrayList<String> characterImages = wikiDB.searchImages(characterID);
+
+        final GridBagConstraints c = new GridBagConstraints();
+        JPanel imagesPanel = displayImages(characterImages, c);
+
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 0;
+        c.gridy = 6;
+
+        rootPanel.add(imagesPanel, c);
+        rootPanel.repaint();
+
+        setContentPane(rootPanel);
+        pack();
+        setVisible(true);
+
+
     }
 
     private JPanel displayImages(ArrayList<String> characterImages, GridBagConstraints c){
@@ -473,6 +494,30 @@ public class CharacterPage extends JFrame {
 
         return imagesPanel;
 
+    }
+
+    private void addCharactersToFile(Character character, BufferedWriter openBufWriter) {
+        try{
+            //Strings must be inserted into the file, and read from the file, because if the
+            //int of the genre, media, or universe doesn't exist, the whole character will be
+            //rejected. If the String of the genre, media or universe doesn't exist, the
+            //database will insert it automatically.
+
+            String genreName = wikiDB.getGenreName(character.getGenreID());
+            String universeName = wikiDB.getUniverseName(character.getUniverseID());
+            String mediaTitle= wikiDB.getMediaTile(character.getMediaID());
+
+            openBufWriter.write(character.getCharacterName() + " = ");
+            openBufWriter.write(character.getGender() + " = ");
+            openBufWriter.write(genreName + " = ");
+            openBufWriter.write(universeName + " = ");
+            openBufWriter.write(mediaTitle + " = ");
+            openBufWriter.write(character.getDescription() + " = ");
+            openBufWriter.newLine();
+
+        } catch (IOException io){
+            io.printStackTrace();
+        }
     }
 
 

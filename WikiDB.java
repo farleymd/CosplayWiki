@@ -1,9 +1,14 @@
 package Marty.company;
 
 import javax.xml.transform.Result;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.*;
 import java.sql.*;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -239,28 +244,100 @@ public class WikiDB {
             psInsert.setString(6,description);
             psInsert.executeUpdate();
 
-            String fetchAllDataSQL = "SELECT * from CosplayCharacter";
-
-            resultSet = statement.executeQuery(fetchAllDataSQL);
-            while (resultSet.next()) {
-                String name = resultSet.getString("name");
-                int universeCharID = resultSet.getInt("universeID");
-                int mediaCharID = resultSet.getInt("mediaID");
-                String uName = resultSet.getString("uName");
-
-                System.out.println("Character Name : " + name +
-                        "Upper Case Name: " + uName +
-                        " UniverseID : " + universeCharID +
-                        " MediaID:" + mediaCharID);
-            }
-
-            resultSet.close();
-
 
         } catch (SQLException se){
             se.printStackTrace();
         }
 
+    }
+
+    public void searchAllCharacters(){
+        ResultSet resultSet = null;
+
+        try {
+            String fetchAllDataSQL = "SELECT * from CosplayCharacter";
+
+            resultSet = statement.executeQuery(fetchAllDataSQL);
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                int genreCharID = resultSet.getInt("genreID");
+                String genreCharName = getGenreName(genreCharID);
+                int universeCharID = resultSet.getInt("universeID");
+                String universeCharName = getUniverseName(universeCharID);
+                int mediaCharID = resultSet.getInt("mediaID");
+                String mediaCharName = getMediaTile(mediaCharID);
+                String uName = resultSet.getString("uName");
+
+                System.out.println("Character Name : " + name +
+                        "Upper Case Name : " + uName +
+                        " GenreID : " + genreCharID +
+                        " Genre Name : " + genreCharName +
+                        " UniverseID : " + universeCharID +
+                        " Universe Name : " + universeCharName +
+                        " MediaID:" + mediaCharID +
+                        " Media Title : " + mediaCharName);
+            }
+
+            resultSet.close();
+
+        } catch (SQLException sql){
+            sql.printStackTrace();
+        }
+    }
+
+    public void insertCharacterFromFile(){
+        try {
+            BufferedReader bufReader = new BufferedReader(new FileReader("addCharacters.txt"));
+            String line;
+            ArrayList<String> words = new ArrayList<String>();
+
+
+            while ((line = bufReader.readLine()) != null) {
+                String[] split = line.split(" = ");
+                    String fileCharacterName = split[0];
+                    String fileGender = split[1];
+                    String fileGenre = split[2];
+                    String fileUniverse = split[3];
+                    String fileMedia = split[4];
+                    String fileDesc = split[5];
+
+                int genreID = getGenreID(fileGenre);
+                int universeID = getUniverseID(fileUniverse);
+                int mediaID = getMediaID(fileMedia);
+
+
+                String prepCharacterInsert = "INSERT INTO CosplayCharacter(name, gender, genreID," +
+                            "universeID, mediaID, description) VALUES (?,?,?,?,?,?)";
+
+                    try {
+                        psInsert = conn.prepareStatement(prepCharacterInsert);
+
+                        psInsert.setString(1, fileCharacterName);
+
+                        psInsert.setString(2, fileGender);
+
+                        psInsert.setInt(3, genreID);
+
+                        psInsert.setInt(4, universeID);
+
+                        psInsert.setInt(5, mediaID);
+
+                        psInsert.setString(6, fileDesc);
+                        psInsert.executeUpdate();
+                    } catch (SQLException sql){
+                        sql.printStackTrace();
+                    }
+
+                split = null;
+                }
+            return;
+        } catch (FileNotFoundException ffe){
+            System.out.println(ffe);
+            System.out.println("There are no Open Ticket files in the provided directory.");
+            return;
+        } catch (IOException io){
+
+        }
     }
 
     public ArrayList searchCharacter(String characterName){
@@ -289,11 +366,6 @@ public class WikiDB {
 
                 characterDetails.add(new Character(characterID, characterName, gender, genreID,
                         universeID, mediaID, description));
-
-
-                System.out.println("CharacterID: " + characterID + "Character Name:" + characterName + " Gender: " + gender +
-                        " Genre: " + genreName + " Universe: " + universeName + "Title of Series: " +
-                        mediaTitle + " Character Description: " + description);
 
 
             }

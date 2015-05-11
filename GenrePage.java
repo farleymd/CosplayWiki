@@ -12,6 +12,8 @@ import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.IOException;
 import java.util.*;
 
@@ -61,6 +63,7 @@ public class GenrePage extends JFrame {
         genreNameLabel.setText("");
 
         searchDropList.setSelectedItem(genre);
+        searchDropList.requestFocus();
 
         genreTree.setModel(null);
         genreTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -175,6 +178,20 @@ public class GenrePage extends JFrame {
                         io.printStackTrace();
                     }
                 }
+            }
+        });
+
+        searchText.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+                searchText.setText("");
+
+                Font userInput = new Font("Courier", Font.BOLD,12);
+
+                searchText.setFont(userInput);
+
+
             }
         });
 
