@@ -43,6 +43,7 @@ public class CharacterPage extends JFrame {
     private JButton editCharacterButton;
     private JButton addImagesButton;
     private JLabel genderLabel;
+    private JPanel imagesPanel;
 
     final String character = "Character";
     final String genre = "Genre";
@@ -135,6 +136,7 @@ public class CharacterPage extends JFrame {
                             JOptionPane.showMessageDialog(null, "GOODBYE");
                         }
                     } else {
+
                         editCharacterButton.setVisible(true);
 
                         for (int i = 0; i < characterDetails.size(); i++) {
@@ -167,7 +169,10 @@ public class CharacterPage extends JFrame {
                         titleName.setText(mediaText);
                         characterDescription.setText(descriptionText);
 
+                        //TODO FIX DUPLICATING IMAGES ISSUE
+
                         ArrayList<String> characterImages = wikiDB.searchImages(characterID);
+                        
 
                         JPanel imagesPanel = displayImages(characterImages, c);
 
@@ -183,7 +188,6 @@ public class CharacterPage extends JFrame {
                         pack();
                         setVisible(true);
                         System.out.println("Repainting.");
-
                     }
                 }
             }
@@ -483,8 +487,6 @@ public class CharacterPage extends JFrame {
                 JLabel cIcon = new JLabel(new ImageIcon(img2));
 
                 cIcon.setBorder(bTemp);
-
-
                 imagesPanel.add(cIcon, c);
 
             }

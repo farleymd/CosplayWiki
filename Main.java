@@ -22,7 +22,7 @@ public class Main {
         //TODO TRY TO MAKE TINY URL
 
 //        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
-        
+
         try{
             CharacterPage characterPage = new CharacterPage(wikiDB);
 
