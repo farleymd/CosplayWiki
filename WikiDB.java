@@ -361,7 +361,48 @@ public class WikiDB {
             return;
         } catch (FileNotFoundException ffe){
             System.out.println(ffe);
-            System.out.println("There are no Open Ticket files in the provided directory.");
+            System.out.println("There are no files by that name in the directory.");
+            return;
+        } catch (IOException io){
+
+        }
+    }
+
+    public void insertImagesFromFile(){
+        try {
+            BufferedReader bufReader = new BufferedReader(new FileReader("addCharacterImages.txt"));
+            String line;
+
+            while ((line = bufReader.readLine()) != null) {
+                String[] split = line.split(" = ");
+                String fileCharacterName = split[0];
+                String fileAuthor = split[1];
+                String fileURL = split[2];
+
+                int characterID = getCharacterID(fileCharacterName);
+
+                String prepImageInsert = "INSERT INTO Images(author, characterID, url) VALUES (?,?,?)";
+
+                try {
+                    psInsert = conn.prepareStatement(prepImageInsert);
+
+
+                    psInsert.setString(1, fileAuthor);
+                    psInsert.setInt(2, characterID);
+                    psInsert.setString(3, fileURL);
+                    psInsert.executeUpdate();
+
+
+                } catch (SQLException se){
+                    se.printStackTrace();
+                }
+
+                split = null;
+            }
+            return;
+        } catch (FileNotFoundException ffe){
+            System.out.println(ffe);
+            System.out.println("There are no files by that name in the directory.");
             return;
         } catch (IOException io){
 

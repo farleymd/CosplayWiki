@@ -16,20 +16,13 @@ public class Main {
             wikiDB.fillDB();
 
         wikiDB.insertCharacterFromFile();
-
-        //wikiDB.searchAllCharacters();
-
-        int characterID = wikiDB.getCharacterID("Sailor Moon");
+        wikiDB.insertImagesFromFile();
 
 
-        //TODO TRUNCATE URL; MAKE TINYURL
-        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
-        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
-        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
-        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
-        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
+        //TODO TRY TO MAKE TINY URL
 
-
+//        wikiDB.insertImage(characterID, "Marty", "http://cosplayidol.otakuhouse.com/wp-content/uploads/2012/06/s-1-1.jpg");
+        
         try{
             CharacterPage characterPage = new CharacterPage(wikiDB);
 
