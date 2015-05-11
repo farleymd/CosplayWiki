@@ -13,10 +13,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -52,9 +49,10 @@ public class CharacterPage extends JFrame {
     final String universe = "Universe";
     final String mediaTitle = "Title of Series";
 
+
     //TODO ADD LOGIC FOR EDITING CHARACTER
 
-    public CharacterPage(WikiDB db) throws IOException {
+    public CharacterPage(WikiDB db, final BufferedWriter openBufWriter) throws IOException {
         super("Character Page");
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -68,6 +66,7 @@ public class CharacterPage extends JFrame {
         buildUI(c);
 
         this.wikiDB = db;
+
 
 
         searchDropList.addItem(character);
@@ -91,8 +90,6 @@ public class CharacterPage extends JFrame {
 
         editCharacterButton.setVisible(false);
 
-        FileWriter openWriter = new FileWriter("addCharacters.txt");
-        final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
 
 
 
@@ -126,7 +123,7 @@ public class CharacterPage extends JFrame {
                         if (reply == JOptionPane.YES_OPTION) {
                             try {
                                 setVisible(false);
-                                new newCharacter(wikiDB).setVisible(true);
+                                new newCharacter(wikiDB, openBufWriter).setVisible(true);
                             } catch (IOException io) {
                                 io.printStackTrace();
                             }
@@ -197,7 +194,7 @@ public class CharacterPage extends JFrame {
                 if (searchDropList.getSelectedItem().equals(genre)){
                     try {
                         setVisible(false);
-                        new GenrePage(wikiDB).setVisible(true);
+                        new GenrePage(wikiDB, openBufWriter).setVisible(true);
                     } catch (IOException io){
                         io.printStackTrace();
                     }
@@ -266,14 +263,16 @@ public class CharacterPage extends JFrame {
         quitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                wikiDB.deleteDB();
-                wikiDB.closeDB();
 
                 try {
                     openBufWriter.close();
                 } catch (IOException io){
-                    io.printStackTrace();
+
                 }
+
+                wikiDB.deleteDB();
+                wikiDB.closeDB();
+
                 System.exit(0);
             }
         });
@@ -503,6 +502,7 @@ public class CharacterPage extends JFrame {
             //rejected. If the String of the genre, media or universe doesn't exist, the
             //database will insert it automatically.
 
+
             String genreName = wikiDB.getGenreName(character.getGenreID());
             String universeName = wikiDB.getUniverseName(character.getUniverseID());
             String mediaTitle= wikiDB.getMediaTile(character.getMediaID());
@@ -514,6 +514,7 @@ public class CharacterPage extends JFrame {
             openBufWriter.write(mediaTitle + " = ");
             openBufWriter.write(character.getDescription() + " = ");
             openBufWriter.newLine();
+
 
         } catch (IOException io){
             io.printStackTrace();

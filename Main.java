@@ -1,5 +1,7 @@
 package Marty.company;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class Main {
@@ -9,44 +11,13 @@ public class Main {
         WikiDB wikiDB = new WikiDB();
 
 
-        boolean databaseExist = wikiDB.isDbCreated();
-
-        if (databaseExist == false){
             wikiDB.connectDB();
             wikiDB.createDB();
             wikiDB.fillDB();
-        }
 
         wikiDB.insertCharacterFromFile();
 
-//        wikiDB.insertCharacter("10th Doctor", "Male", "Television", "Doctor Who", "Doctor Who Series 2-4", "Allons-y!");
-//
-//        //wikiDB.insertCharacter("Sailor Moon", "Female", "Anime", "Sailor Moon", "Sailor Moon SuperS", "This is a test.");
-//        //wikiDB.searchCharacter("Sailor Moon");
-//
-//        wikiDB.insertCharacter("Sailor Mars", "Female", "Anime", "Sailor Moon", "Sailor Moon SuperS", "Champion of Mars");
-//
-//        wikiDB.insertCharacter("Sailor Star Fighter", "Female", "Anime", "Sailor Moon", "Sailor Moon Stars", "Leader of Sailor Starlights");
-//
-//        wikiDB.insertCharacter("Goku", "Male", "Anime", "Dragonball Z", "Dragon Ball Z", "Protector of Earth");
-//
-//        wikiDB.insertCharacter("Spike Spiegel", "Male", "Anime", "Cowboy Bebop", "Cowboy Bebop", "He is a bounty hunter on a spaceship " +
-//                "called the Bebop and travels space with his crew Jet, Faye, Ed & Ein.");
-//
-//        wikiDB.insertCharacter("Yoko Littner", "Female", "Anime", "Gurren Lagann", "Tengen Toppa Gurren Lagann", "A member of a small resistance against the beastmen");
-//
-//        wikiDB.insertCharacter("Queen Elsa", "Female", "Movies", "Disney", "Frozen", "Has magical ice powers.");
-//
-//
-//        wikiDB.insertCharacter("Iron Man", "Male", "Movies", "Marvel", "The Avengers", "Billionare genius Tony Stark");
-//
-//        wikiDB.insertCharacter("Cloud Strike", "Male", "Video Games", "Final Fantasy", "Final Fantasy 7", "Ex-Soldier, Big Sword");
-//
-//        wikiDB.insertCharacter("Ariel", "Female", "Movies", "Disney", "Little Mermaid", "Wants to be human.");
-//
-//        wikiDB.insertCharacter("12th Doctor", "Male", "Television", "Doctor Who", "Doctor Who Series 8", "Attack eyebrows");
-
-        wikiDB.searchAllCharacters();
+        //wikiDB.searchAllCharacters();
 
         int characterID = wikiDB.getCharacterID("Sailor Moon");
 
@@ -60,19 +31,12 @@ public class Main {
 
 
         try{
-            CharacterPage characterPage = new CharacterPage(wikiDB);
+            FileWriter openWriter = new FileWriter("addCharacters.txt", true);
+            final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
+            CharacterPage characterPage = new CharacterPage(wikiDB, openBufWriter);
 
         } catch (IOException io){
             io.printStackTrace();
         }
-
-
-
-        //wikiDB.deleteDB();
-
-
-
-
-	// write your code here
     }
 }

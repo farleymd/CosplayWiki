@@ -1,19 +1,10 @@
 package Marty.company;
 
-import javax.xml.transform.Result;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.*;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Scanner;
-import java.util.Date;
+
 
 /**
  * Created by marty.farley on 5/2/2015.
@@ -29,15 +20,8 @@ public class WikiDB {
     Connection conn = null;
     ResultSet resultSet = null;
 
-
     PreparedStatement psInsert = null;
-    //LinkedList<Statement> allStatements = new LinkedList<Statement>();
 
-    boolean dbCreated = false;  //boolean to determine if this is the first time database has been accessed
-
-    public boolean isDbCreated() {
-        return dbCreated;
-    }
 
     public void connectDB(){
         try {
@@ -251,21 +235,51 @@ public class WikiDB {
 
     }
 
-    public void searchAllCharacters(){
+    public int getCharacterID(String characterName){
         ResultSet resultSet = null;
+        int characterID = 0;
+
+        try{
+            String searchGenre = "select * from CosplayCharacter where name = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
+            recordSearch.setString(1,characterName);
+            resultSet = recordSearch.executeQuery();
+
+            if (resultSet.next()) {
+                //get the universe name based on the ID
+                characterID = resultSet.getInt("characterID");
+            } else{
+                System.out.println("Character could not be found.");
+
+            }
+
+            resultSet.close();
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+        return characterID;
+    }
+
+    public ArrayList<Character> searchAllCharacters(){
+        ResultSet resultSet = null;
+        ArrayList<Character> allCharacters = new ArrayList<Character>();
 
         try {
             String fetchAllDataSQL = "SELECT * from CosplayCharacter";
 
             resultSet = statement.executeQuery(fetchAllDataSQL);
             while (resultSet.next()) {
+                int charID = resultSet.getInt("characterID");
                 String name = resultSet.getString("name");
+                String genderChar = resultSet.getString("gender");
                 int genreCharID = resultSet.getInt("genreID");
                 String genreCharName = getGenreName(genreCharID);
                 int universeCharID = resultSet.getInt("universeID");
                 String universeCharName = getUniverseName(universeCharID);
                 int mediaCharID = resultSet.getInt("mediaID");
                 String mediaCharName = getMediaTile(mediaCharID);
+                String charDesc = resultSet.getString("description");
                 String uName = resultSet.getString("uName");
 
                 System.out.println("Character Name : " + name +
@@ -276,21 +290,35 @@ public class WikiDB {
                         " Universe Name : " + universeCharName +
                         " MediaID:" + mediaCharID +
                         " Media Title : " + mediaCharName);
-            }
 
+                Character character = new Character(charID, name, genderChar, genreCharID,
+                        universeCharID, mediaCharID, charDesc);
+                allCharacters.add(character);
+
+                try {
+                    FileWriter openWriter = new FileWriter("addCharacters.txt");
+                    final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
+
+                    addCharactersToFile(character, openBufWriter);
+
+                } catch (IOException io){
+
+                }
+
+            }
             resultSet.close();
 
         } catch (SQLException sql){
             sql.printStackTrace();
         }
+
+        return allCharacters;
     }
 
     public void insertCharacterFromFile(){
         try {
             BufferedReader bufReader = new BufferedReader(new FileReader("addCharacters.txt"));
             String line;
-            ArrayList<String> words = new ArrayList<String>();
-
 
             while ((line = bufReader.readLine()) != null) {
                 String[] split = line.split(" = ");
@@ -710,7 +738,6 @@ public class WikiDB {
         return universeCharacters;
     }
 
-
     public int getMediaID(String mediaTitle){
         ResultSet resultSet = null;
         ResultSet secondResultSet = null;
@@ -821,32 +848,6 @@ public class WikiDB {
         return mediaCharacters;
     }
 
-    public int getCharacterID(String characterName){
-        ResultSet resultSet = null;
-        int characterID = 0;
-
-        try{
-            String searchGenre = "select * from CosplayCharacter where name = (?)";
-            PreparedStatement recordSearch = conn.prepareStatement(searchGenre);
-            recordSearch.setString(1,characterName);
-            resultSet = recordSearch.executeQuery();
-
-            if (resultSet.next()) {
-                //get the universe name based on the ID
-                characterID = resultSet.getInt("characterID");
-            } else{
-                System.out.println("Character could not be found.");
-
-            }
-
-            resultSet.close();
-        } catch (SQLException se){
-            se.printStackTrace();
-        }
-
-        return characterID;
-    }
-
     public void insertImage (int characterID, String author, String url){
 
         String prepImageInsert = "INSERT INTO Images(author, characterID, url) VALUES (?,?,?)";
@@ -890,6 +891,30 @@ public class WikiDB {
         }
 
         return characterImages;
+    }
+
+    private void addCharactersToFile(Character character, BufferedWriter openBufWriter) {
+        try{
+            //Strings must be inserted into the file, and read from the file, because if the
+            //int of the genre, media, or universe doesn't exist, the whole character will be
+            //rejected. If the String of the genre, media or universe doesn't exist, the
+            //database will insert it automatically.
+
+            String genreName = getGenreName(character.getGenreID());
+            String universeName = getUniverseName(character.getUniverseID());
+            String mediaTitle= getMediaTile(character.getMediaID());
+
+            openBufWriter.write(character.getCharacterName() + " = ");
+            openBufWriter.write(character.getGender() + " = ");
+            openBufWriter.write(genreName + " = ");
+            openBufWriter.write(universeName + " = ");
+            openBufWriter.write(mediaTitle + " = ");
+            openBufWriter.write(character.getDescription() + " = ");
+            openBufWriter.newLine();
+
+        } catch (IOException io){
+            io.printStackTrace();
+        }
     }
 
     public void deleteDB(){

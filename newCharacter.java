@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -32,7 +34,7 @@ public class newCharacter extends JFrame {
 
 
 
-    public newCharacter(final WikiDB db) throws IOException {
+    public newCharacter(final WikiDB db, final BufferedWriter openBufWriter) throws IOException {
         super("New Character");
         setContentPane(newCharacterPanel);
         pack();
@@ -60,7 +62,7 @@ public class newCharacter extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 try {
                     setVisible(false);
-                    new CharacterPage(db).setVisible(true);
+                    new CharacterPage(db, openBufWriter).setVisible(true);
                 } catch (IOException io){
                     io.printStackTrace();
                 }
@@ -101,11 +103,23 @@ public class newCharacter extends JFrame {
                     wikiDB.insertCharacter(characterName, gender, genre, universe,
                             media, description);
 
+                    int characterID = wikiDB.getCharacterID(characterName);
+
+                    int genreID = wikiDB.getGenreID(genre);
+                    int universeID = wikiDB.getUniverseID(universe);
+                    int mediaID = wikiDB.getMediaID(media);
+
+                    Character character = new Character(characterID,characterName, gender, genreID, universeID,
+                            mediaID, description);
+
+                    addCharactersToFile(character, openBufWriter);
+
                     JOptionPane.showMessageDialog(null, "Character added.");
 
                     try {
                         setVisible(false);
-                        new CharacterPage(db).setVisible(true);
+                        new CharacterPage(db, openBufWriter).setVisible(true);
+                        openBufWriter.close();
                     } catch (IOException io){
                         io.printStackTrace();
                     }
@@ -178,5 +192,29 @@ public class newCharacter extends JFrame {
 
             }
         });
+    }
+
+    private void addCharactersToFile(Character character, BufferedWriter openBufWriter) {
+        try{
+            //Strings must be inserted into the file, and read from the file, because if the
+            //int of the genre, media, or universe doesn't exist, the whole character will be
+            //rejected. If the String of the genre, media or universe doesn't exist, the
+            //database will insert it automatically.
+
+            String genreName = wikiDB.getGenreName(character.getGenreID());
+            String universeName = wikiDB.getUniverseName(character.getUniverseID());
+            String mediaTitle= wikiDB.getMediaTile(character.getMediaID());
+
+            openBufWriter.write(character.getCharacterName() + " = ");
+            openBufWriter.write(character.getGender() + " = ");
+            openBufWriter.write(genreName + " = ");
+            openBufWriter.write(universeName + " = ");
+            openBufWriter.write(mediaTitle + " = ");
+            openBufWriter.write(character.getDescription() + " = ");
+            openBufWriter.newLine();
+
+        } catch (IOException io){
+            io.printStackTrace();
+        }
     }
 }

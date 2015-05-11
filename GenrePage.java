@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -41,7 +42,7 @@ public class GenrePage extends JFrame {
 
     DefaultListModel<Character> characterListModel;
 
-    public GenrePage(final WikiDB db) throws IOException {
+    public GenrePage(final WikiDB db, final BufferedWriter openBufWriter) throws IOException {
         super("Genre Search");
         setContentPane(genrePanel);
         pack();
@@ -153,7 +154,7 @@ public class GenrePage extends JFrame {
                 Character selectedCharacter = GenrePage.this.genreList.getSelectedValue();
                 try{
                     setVisible(false);
-                    CharacterPage characterPage = new CharacterPage(wikiDB);
+                    CharacterPage characterPage = new CharacterPage(wikiDB, openBufWriter);
                     characterPage.showCharacter(selectedCharacter);
                     characterPage.setVisible(true);
 
@@ -173,7 +174,7 @@ public class GenrePage extends JFrame {
                 if (searchDropList.getSelectedItem().equals(character)){
                     try {
                         setVisible(false);
-                        new CharacterPage(wikiDB).setVisible(true);
+                        new CharacterPage(wikiDB, openBufWriter).setVisible(true);
                     } catch (IOException io){
                         io.printStackTrace();
                     }
