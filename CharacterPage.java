@@ -54,6 +54,7 @@ public class CharacterPage extends JFrame {
 
 
     //TODO ADD LOGIC FOR EDITING CHARACTER
+    //TODO ADD IMAGES TO BUFF WRITER FILE
 
     public CharacterPage(WikiDB db) throws IOException {
         super("Character Page");
