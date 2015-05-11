@@ -49,10 +49,13 @@ public class CharacterPage extends JFrame {
     final String universe = "Universe";
     final String mediaTitle = "Title of Series";
 
+    FileWriter openWriter = new FileWriter("addCharacters.txt", true);
+    final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
+
 
     //TODO ADD LOGIC FOR EDITING CHARACTER
 
-    public CharacterPage(WikiDB db, final BufferedWriter openBufWriter) throws IOException {
+    public CharacterPage(WikiDB db) throws IOException {
         super("Character Page");
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -66,8 +69,6 @@ public class CharacterPage extends JFrame {
         buildUI(c);
 
         this.wikiDB = db;
-
-
 
         searchDropList.addItem(character);
         searchDropList.addItem(mediaTitle);
@@ -90,8 +91,9 @@ public class CharacterPage extends JFrame {
 
         editCharacterButton.setVisible(false);
 
-
-
+        setContentPane(rootPanel);
+        pack();
+        setVisible(true);
 
 
         searchButton.addActionListener(new ActionListener() {
@@ -123,7 +125,7 @@ public class CharacterPage extends JFrame {
                         if (reply == JOptionPane.YES_OPTION) {
                             try {
                                 setVisible(false);
-                                new newCharacter(wikiDB, openBufWriter).setVisible(true);
+                                new newCharacter(wikiDB).setVisible(true);
                             } catch (IOException io) {
                                 io.printStackTrace();
                             }
@@ -131,45 +133,42 @@ public class CharacterPage extends JFrame {
                         } else {
                             JOptionPane.showMessageDialog(null, "GOODBYE");
                         }
-                    }
+                    } else {
+                        editCharacterButton.setVisible(true);
 
-                    editCharacterButton.setVisible(true);
+                        for (int i = 0; i < characterDetails.size(); i++) {
+                            characterID = characterDetails.get(i).getCharacterID();
 
-                    for (int i = 0; i < characterDetails.size(); i++) {
-                        characterID = characterDetails.get(i).getCharacterID();
+                            characterNameText = characterDetails.get(i).getCharacterName();
+                            characterNameText = characterNameText.toUpperCase();
 
-                        characterNameText = characterDetails.get(i).getCharacterName();
-                        characterNameText = characterNameText.toUpperCase();
+                            genderText = characterDetails.get(i).getGender();
 
-                        genderText = characterDetails.get(i).getGender();
+                            genreIDInt = characterDetails.get(i).getGenreID();
+                            genreText = wikiDB.getGenreName(genreIDInt);
 
-                        genreIDInt = characterDetails.get(i).getGenreID();
-                        genreText = wikiDB.getGenreName(genreIDInt);
+                            universeIDInt = characterDetails.get(i).getUniverseID();
+                            universeText = wikiDB.getUniverseName(universeIDInt);
 
-                        universeIDInt = characterDetails.get(i).getUniverseID();
-                        universeText = wikiDB.getUniverseName(universeIDInt);
+                            mediaIDInt = characterDetails.get(i).getMediaID();
+                            mediaText = wikiDB.getMediaTile(mediaIDInt);
 
-                        mediaIDInt = characterDetails.get(i).getMediaID();
-                        mediaText = wikiDB.getMediaTile(mediaIDInt);
+                            descriptionText = characterDetails.get(i).getDescription();
 
-                        descriptionText = characterDetails.get(i).getDescription();
+                            Character genreCharacter = wikiDB.returnCharacter(characterID);
 
-                        Character genreCharacter = wikiDB.returnCharacter(characterID);
+                        }
 
-                        addCharactersToFile(genreCharacter, openBufWriter);
+                        characterName.setText(characterNameText);
+                        genderName.setText(genderText);
+                        genreName.setText(genreText);
+                        universeName.setText(universeText);
+                        titleName.setText(mediaText);
+                        characterDescription.setText(descriptionText);
 
-                    }
+                        ArrayList<String> characterImages = wikiDB.searchImages(characterID);
 
-                    characterName.setText(characterNameText);
-                    genderName.setText(genderText);
-                    genreName.setText(genreText);
-                    universeName.setText(universeText);
-                    titleName.setText(mediaText);
-                    characterDescription.setText(descriptionText);
-
-                    ArrayList<String> characterImages = wikiDB.searchImages(characterID);
-
-                    JPanel imagesPanel = displayImages(characterImages, c);
+                        JPanel imagesPanel = displayImages(characterImages, c);
 
 
                         c.fill = GridBagConstraints.HORIZONTAL;
@@ -182,8 +181,9 @@ public class CharacterPage extends JFrame {
                         setContentPane(rootPanel);
                         pack();
                         setVisible(true);
+                        System.out.println("Repainting.");
 
-
+                    }
                 }
             }
         });
@@ -194,7 +194,7 @@ public class CharacterPage extends JFrame {
                 if (searchDropList.getSelectedItem().equals(genre)){
                     try {
                         setVisible(false);
-                        new GenrePage(wikiDB, openBufWriter).setVisible(true);
+                        new GenrePage(wikiDB).setVisible(true);
                     } catch (IOException io){
                         io.printStackTrace();
                     }
@@ -277,9 +277,7 @@ public class CharacterPage extends JFrame {
             }
         });
 
-        setContentPane(rootPanel);
-        pack();
-        setVisible(true);
+
     }
 
 
@@ -520,6 +518,5 @@ public class CharacterPage extends JFrame {
             io.printStackTrace();
         }
     }
-
 
 }

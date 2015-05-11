@@ -24,8 +24,8 @@ public class newCharacter extends JFrame {
     private JTextField descriptionText;
     private JButton quitButton;
     private JButton addCharacterButton;
-    private JButton clearFieldsButton;
     private JPanel newCharacterPanel;
+    private JButton clearFieldsButton;
 
     final String female = "Female";
     final String male = "Male";
@@ -34,7 +34,7 @@ public class newCharacter extends JFrame {
 
 
 
-    public newCharacter(final WikiDB db, final BufferedWriter openBufWriter) throws IOException {
+    public newCharacter(final WikiDB db) throws IOException {
         super("New Character");
         setContentPane(newCharacterPanel);
         pack();
@@ -57,17 +57,8 @@ public class newCharacter extends JFrame {
         mediaText.setFont(font);
         descriptionText.setFont(font);
 
-        quitButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    setVisible(false);
-                    new CharacterPage(db, openBufWriter).setVisible(true);
-                } catch (IOException io){
-                    io.printStackTrace();
-                }
-            }
-        });
+        FileWriter openWriter = new FileWriter("addCharacters.txt", true);
+        final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
 
         addCharacterButton.addActionListener(new ActionListener() {
             @Override
@@ -118,8 +109,7 @@ public class newCharacter extends JFrame {
 
                     try {
                         setVisible(false);
-                        new CharacterPage(db, openBufWriter).setVisible(true);
-                        openBufWriter.close();
+                        new CharacterPage(db).setVisible(true);
                     } catch (IOException io){
                         io.printStackTrace();
                     }
@@ -136,7 +126,6 @@ public class newCharacter extends JFrame {
                 nameText.setText("");
 
                 Font userInput = new Font("Courier", Font.BOLD, 12);
-
                 nameText.setFont(userInput);
 
             }
@@ -190,6 +179,18 @@ public class newCharacter extends JFrame {
                 descriptionText.setFont(userInput);
 
 
+            }
+        });
+
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    setVisible(false);
+                    new CharacterPage(db).setVisible(true);
+                } catch (IOException io){
+                    io.printStackTrace();
+                }
             }
         });
     }

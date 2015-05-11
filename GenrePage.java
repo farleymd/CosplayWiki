@@ -42,7 +42,7 @@ public class GenrePage extends JFrame {
 
     DefaultListModel<Character> characterListModel;
 
-    public GenrePage(final WikiDB db, final BufferedWriter openBufWriter) throws IOException {
+    public GenrePage(final WikiDB db) throws IOException {
         super("Genre Search");
         setContentPane(genrePanel);
         pack();
@@ -154,7 +154,7 @@ public class GenrePage extends JFrame {
                 Character selectedCharacter = GenrePage.this.genreList.getSelectedValue();
                 try{
                     setVisible(false);
-                    CharacterPage characterPage = new CharacterPage(wikiDB, openBufWriter);
+                    CharacterPage characterPage = new CharacterPage(wikiDB);
                     characterPage.showCharacter(selectedCharacter);
                     characterPage.setVisible(true);
 
@@ -174,7 +174,7 @@ public class GenrePage extends JFrame {
                 if (searchDropList.getSelectedItem().equals(character)){
                     try {
                         setVisible(false);
-                        new CharacterPage(wikiDB, openBufWriter).setVisible(true);
+                        new CharacterPage(wikiDB).setVisible(true);
                     } catch (IOException io){
                         io.printStackTrace();
                     }

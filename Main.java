@@ -31,9 +31,7 @@ public class Main {
 
 
         try{
-            FileWriter openWriter = new FileWriter("addCharacters.txt", true);
-            final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
-            CharacterPage characterPage = new CharacterPage(wikiDB, openBufWriter);
+            CharacterPage characterPage = new CharacterPage(wikiDB);
 
         } catch (IOException io){
             io.printStackTrace();
