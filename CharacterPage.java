@@ -243,23 +243,45 @@ public class CharacterPage extends JFrame {
                 myPanel.add(imageURL);
                 myPanel.add(Box.createHorizontalStrut(15));
 
-                JOptionPane.showConfirmDialog(null, myPanel, "Please enter following fields",
+                int reply = JOptionPane.showConfirmDialog(null, myPanel, "Please enter following fields",
                         JOptionPane.OK_CANCEL_OPTION);
 
-                String characterNameText = characterName.getText();
-                int characterID = 0;
+                if (reply == JOptionPane.OK_OPTION){
+                    if (!author.getText().equals(null) && !imageURL.getText().equals(null)){
+                        String characterNameText = characterName.getText();
+                        int characterID = 0;
 
-                ArrayList<Character> characterDetails = wikiDB.searchCharacter(characterNameText);
+                        ArrayList<Character> characterDetails = wikiDB.searchCharacter(characterNameText);
 
-                for (int i = 0; i < characterDetails.size(); i++){
-                    characterID = characterDetails.get(i).getCharacterID();
-                    characterNameText = characterDetails.get(i).getCharacterName();
+                        for (int i = 0; i < characterDetails.size(); i++){
+                            characterID = characterDetails.get(i).getCharacterID();
+                            characterNameText = characterDetails.get(i).getCharacterName();
+                        }
+
+                        wikiDB.insertImage(characterID, author.getText(), imageURL.getText());
+
+                        addImagesToFile(characterNameText, author.getText(), imageURL.getText(), openImageWriter);
+
+                        ArrayList<String> characterImages = wikiDB.searchImages(characterID);
+
+                        //TODO DISPLAY IMAGE AFTER ADDING
+
+                        final GridBagConstraints c = new GridBagConstraints();
+                        JPanel imagesPanel = displayImages(characterImages, c);
+
+                        c.fill = GridBagConstraints.HORIZONTAL;
+                        c.gridx = 0;
+                        c.gridy = 6;
+
+                        rootPanel.add(imagesPanel, c);
+                        rootPanel.repaint();
+
+                        setContentPane(rootPanel);
+                        pack();
+                        setVisible(true);
+
+                    }
                 }
-
-                wikiDB.insertImage(characterID, author.getText(), imageURL.getText());
-
-                addImagesToFile(characterNameText, author.getText(), imageURL.getText(), openImageWriter);
-
             }
         });
 
