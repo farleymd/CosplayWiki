@@ -204,39 +204,21 @@ public class UniversePage extends JFrame {
         ArrayList<Map.Entry<String, String>> copy3 = new ArrayList<Map.Entry<String, String>>();
         copy3.addAll(mediaHash.entrySet());
 
-
-        for (Map.Entry<String, String> u : copy2) {
-            genreNode = genreToNode.get(u.getValue());
-            if (genreNode == null) {
-                genreNode = new DefaultMutableTreeNode(u.getValue());
-                genreToNode.put(u.getValue(), genreNode);
-                universeMainTree.add(genreNode);
+        for (Map.Entry<String, String> e : copy){
+            universeTitleNode = categoryToNode.get(e.getValue());
+            if (universeTitleNode == null){
+                universeTitleNode = new DefaultMutableTreeNode(e.getValue());
+                categoryToNode.put(e.getValue(), universeTitleNode);
             }
-            universeTitleNode = new DefaultMutableTreeNode(u.getKey());
-            categoryToNode.put(u.getKey(), universeTitleNode);
-            genreNode.add(universeTitleNode);
+            universeMainTree.add(universeTitleNode);
+            mediaTitleNode = new DefaultMutableTreeNode(e.getKey());
+            universeTitleNode.add(mediaTitleNode);
 
-            for (Map.Entry<String, String> e : copy) {
-                universeTitleNode = categoryToNode.get(e.getValue());
-                if (universeTitleNode == null) {
-                    universeTitleNode = new DefaultMutableTreeNode(e.getValue());
-                    categoryToNode.put(e.getValue(), universeTitleNode);
-                }
-                mediaTitleNode = new DefaultMutableTreeNode(e.getKey());
-                mediaToNode.put(e.getKey(), mediaTitleNode);
-                universeTitleNode.add(mediaTitleNode);
-
-                for (Map.Entry<String, String> m : copy3) {
-                    mediaTitleNode = mediaToNode.get(m.getValue());
-                    if (mediaTitleNode == null){
-                        mediaTitleNode = new DefaultMutableTreeNode(m.getValue());
-                        mediaToNode.put(m.getValue(), mediaTitleNode);
-                        universeTitleNode.add(mediaTitleNode);
-                    }
-                }
-            }
 
         }
+
+
+
         universeTree.setModel(new DefaultTreeModel(universeMainTree));
     }
 }
