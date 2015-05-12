@@ -110,6 +110,7 @@ public class newCharacter extends JFrame {
                     try {
                         setVisible(false);
                         new CharacterPage(db).setVisible(true);
+                        openBufWriter.close();
                     } catch (IOException io){
                         io.printStackTrace();
                     }

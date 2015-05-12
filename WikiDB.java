@@ -409,7 +409,7 @@ public class WikiDB {
         }
     }
 
-    public ArrayList searchCharacter(String characterName){
+    public ArrayList<Character> searchCharacter(String characterName){
         ResultSet resultSet = null;
         ArrayList<Character> characterDetails = new ArrayList<Character>();
         String strongCharacterName = characterName.toUpperCase();
@@ -423,6 +423,7 @@ public class WikiDB {
             String universeName = "";
             resultSet = psInsert.executeQuery();
             while (resultSet.next()) {
+                characterName = resultSet.getString("name");
                 int characterID = resultSet.getInt("characterID");
                 String gender = resultSet.getString("gender");
                 int genreID = resultSet.getInt("genreID");

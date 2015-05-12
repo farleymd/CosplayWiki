@@ -18,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * Created by marty.farley on 5/3/2015.
@@ -52,6 +54,9 @@ public class CharacterPage extends JFrame {
 
     FileWriter openWriter = new FileWriter("addCharacters.txt", true);
     final BufferedWriter openBufWriter = new BufferedWriter(openWriter);
+
+    FileWriter imagesWriter = new FileWriter("addCharacterImages.txt", true);
+    final BufferedWriter openImageWriter = new BufferedWriter(imagesWriter);
 
 
     //TODO ADD LOGIC FOR EDITING CHARACTER
@@ -171,8 +176,8 @@ public class CharacterPage extends JFrame {
 
                         //TODO FIX DUPLICATING IMAGES ISSUE
 
+
                         ArrayList<String> characterImages = wikiDB.searchImages(characterID);
-                        
 
                         JPanel imagesPanel = displayImages(characterImages, c);
 
@@ -204,7 +209,12 @@ public class CharacterPage extends JFrame {
                         io.printStackTrace();
                     }
                 } else if (searchDropList.getSelectedItem().equals(universe)){
-                    //TODO ADD UNIVERSE PAGE
+                    try {
+                        setVisible(false);
+                        new UniversePage(wikiDB).setVisible(true);
+                    } catch (IOException io){
+                        io.printStackTrace();
+                    }
                 } else if (searchDropList.getSelectedItem().equals(mediaTitle)){
                     //TODO ADD MEDIA TITLE PAGE
                 }
@@ -243,9 +253,12 @@ public class CharacterPage extends JFrame {
 
                 for (int i = 0; i < characterDetails.size(); i++){
                     characterID = characterDetails.get(i).getCharacterID();
+                    characterNameText = characterDetails.get(i).getCharacterName();
                 }
 
                 wikiDB.insertImage(characterID, author.getText(), imageURL.getText());
+
+                addImagesToFile(characterNameText, author.getText(), imageURL.getText(), openImageWriter);
 
             }
         });
@@ -271,6 +284,7 @@ public class CharacterPage extends JFrame {
 
                 try {
                     openBufWriter.close();
+                    openImageWriter.close();
                 } catch (IOException io){
 
                 }
@@ -520,6 +534,24 @@ public class CharacterPage extends JFrame {
         } catch (IOException io){
             io.printStackTrace();
         }
+    }
+
+    private void addImagesToFile(String characterName, String author, String url, BufferedWriter openImageWriter){
+        try{
+            //Strings must be inserted into the file, and read from the file, because if the
+            //int of the genre, media, or universe doesn't exist, the whole character will be
+            //rejected. If the String of the genre, media or universe doesn't exist, the
+            //database will insert it automatically.
+
+            openImageWriter.write(characterName + " = ");
+            openImageWriter.write(author + " = ");
+            openImageWriter.write(url + " = ");
+            openImageWriter.newLine();
+
+        } catch (IOException io){
+            io.printStackTrace();
+        }
+
     }
 
 }
