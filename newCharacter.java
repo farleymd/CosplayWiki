@@ -183,6 +183,17 @@ public class newCharacter extends JFrame {
             }
         });
 
+        clearFieldsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nameText.setText("");
+                genreText.setText("");
+                universeText.setText("");
+                mediaText.setText("");
+                descriptionText.setText("");
+            }
+        });
+
         quitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

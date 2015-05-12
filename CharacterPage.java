@@ -59,9 +59,6 @@ public class CharacterPage extends JFrame {
     final BufferedWriter openImageWriter = new BufferedWriter(imagesWriter);
 
 
-    //TODO ADD LOGIC FOR EDITING CHARACTER
-    //TODO ADD IMAGES TO BUFF WRITER FILE
-
     public CharacterPage(WikiDB db) throws IOException {
         super("Character Page");
 
@@ -97,6 +94,7 @@ public class CharacterPage extends JFrame {
         characterName.setText("");
 
         editCharacterButton.setVisible(false);
+        addImagesButton.setVisible(false);
 
         setContentPane(rootPanel);
         pack();
@@ -143,6 +141,7 @@ public class CharacterPage extends JFrame {
                     } else {
 
                         editCharacterButton.setVisible(true);
+                        addImagesButton.setVisible(true);
 
                         for (int i = 0; i < characterDetails.size(); i++) {
                             characterID = characterDetails.get(i).getCharacterID();
@@ -297,6 +296,100 @@ public class CharacterPage extends JFrame {
                 searchText.setFont(userInput);
 
 
+            }
+        });
+
+        editCharacterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchString = searchText.getText();
+
+                ArrayList<Character> characterDetails = wikiDB.searchCharacter(searchString);
+
+                Object[] editOptions = {"Character Name", "Gender", "Genre", "Universe", "Title of Series", "Description"};
+                String s = (String)JOptionPane.showInputDialog(null, "Which option would you like to edit?", "Edit Character",
+                        JOptionPane.PLAIN_MESSAGE, null, editOptions, "Character Name");
+
+                int characterID = characterDetails.get(0).getCharacterID();
+
+                if ((s != null) && (s.length() > 0)) {
+                    if (s.equals("Character Name")){
+                        JPanel myPanel = new JPanel();
+                        JTextField characterName = new JTextField(15);
+
+                        myPanel.add(new JLabel("New Name: "));
+                        myPanel.add(characterName);
+
+                        int reply = JOptionPane.showConfirmDialog(null, myPanel, "Edit character name", JOptionPane.OK_CANCEL_OPTION);
+
+                        if (reply == JOptionPane.OK_OPTION){
+                            wikiDB.editCharacterName(characterID, characterName.getText());
+                        }
+
+
+                    } else if (s.equals("Gender")){
+                        JPanel genderPanel = new JPanel();
+                        JTextField newGender = new JTextField(15);
+
+                        genderPanel.add(new JLabel("New Gender: "));
+                        genderPanel.add(newGender);
+
+                        int reply = JOptionPane.showConfirmDialog(null, genderPanel, "Edit gender", JOptionPane.OK_CANCEL_OPTION);
+
+                        if (reply == JOptionPane.OK_OPTION){
+                            wikiDB.editCharacterGender(characterID, newGender.getText());
+                        }
+                    } else if (s.equals("Genre")){
+                        JPanel myPanel = new JPanel();
+                        JTextField newGenre = new JTextField(15);
+
+                        myPanel.add(new JLabel("New Genre: "));
+                        myPanel.add(newGenre);
+
+                        int reply = JOptionPane.showConfirmDialog(null, myPanel, "Edit genre", JOptionPane.OK_CANCEL_OPTION);
+
+                        if (reply == JOptionPane.OK_OPTION){
+                            wikiDB.editCharacterGenre(characterID, newGenre.getText());
+                        }
+
+                    } else if (s.equals("Universe")){
+                        JPanel myPanel = new JPanel();
+                        JTextField newUniverse = new JTextField(15);
+
+                        myPanel.add(new JLabel("New Universe: "));
+                        myPanel.add(newUniverse);
+
+                        int reply = JOptionPane.showConfirmDialog(null, myPanel, "Edit universe", JOptionPane.OK_CANCEL_OPTION);
+                        if (reply == JOptionPane.OK_OPTION){
+                            wikiDB.editCharacterUniverse(characterID, newUniverse.getText());
+                        }
+
+                    } else if (s.equals("Title of Series")){
+                        JPanel myPanel = new JPanel();
+                        JTextField newTitle = new JTextField(15);
+
+                        myPanel.add(new JLabel("New Title of Series: "));
+                        myPanel.add(newTitle);
+
+                        int reply = JOptionPane.showConfirmDialog(null, myPanel, "Edit title", JOptionPane.OK_CANCEL_OPTION);
+
+                        if (reply == JOptionPane.OK_OPTION){
+                            wikiDB.editCharacterMedia(characterID, newTitle.getText());
+                        }
+
+                    } else if (s.equals("Description")){
+                        JPanel myPanel = new JPanel();
+                        JTextField newDesc = new JTextField(15);
+
+                        myPanel.add(new JLabel("New Description: "));
+                        myPanel.add(newDesc);
+
+                        int reply = JOptionPane.showConfirmDialog(null, myPanel, "Edit description", JOptionPane.OK_CANCEL_OPTION);
+                        if (reply == JOptionPane.OK_OPTION){
+                            wikiDB.editCharacterDesc(characterID, newDesc.getText());
+                        }
+                    }
+                }
             }
         });
 

@@ -315,6 +315,101 @@ public class WikiDB {
         return allCharacters;
     }
 
+    public void editCharacterName(int characterID, String characterName){
+        int saveStatus = 0;
+
+        try{
+            String updateName = "UPDATE CosplayCharacter set name = (?) where characterID = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(updateName);
+            recordSearch.setString(1,characterName);
+            recordSearch.setInt(2,characterID);
+            saveStatus = recordSearch.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+    }
+
+    public void editCharacterGender(int characterID, String gender){
+        int saveStatus = 0;
+
+        try{
+            String updateName = "UPDATE CosplayCharacter set gender = (?) where characterID = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(updateName);
+            recordSearch.setString(1,gender);
+            recordSearch.setInt(2,characterID);
+            saveStatus = recordSearch.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+    }
+
+    public void editCharacterGenre(int characterID, String genre){
+        int genreID = getGenreID(genre);
+        int saveStatus = 0;
+
+        try{
+            String updateName = "UPDATE CosplayCharacter set genreID = (?) where characterID = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(updateName);
+            recordSearch.setInt(1, genreID);
+            recordSearch.setInt(2,characterID);
+            saveStatus = recordSearch.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+    }
+
+    public void editCharacterUniverse(int characterID, String universe){
+        int universeID = getUniverseID(universe);
+        int saveStatus = 0;
+
+        try{
+            String updateName = "UPDATE CosplayCharacter set universeID = (?) where characterID = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(updateName);
+            recordSearch.setInt(1,universeID);
+            recordSearch.setInt(2,characterID);
+            saveStatus = recordSearch.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+    }
+
+    public void editCharacterMedia(int characterID, String media){
+        int mediaID = getMediaID(media);
+        int saveStatus = 0;
+
+        try{
+            String updateName = "UPDATE CosplayCharacter set mediaID = (?) where characterID = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(updateName);
+            recordSearch.setInt(1,mediaID);
+            recordSearch.setInt(2,characterID);
+            saveStatus = recordSearch.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+    }
+
+    public void editCharacterDesc (int characterID, String desc){
+        int saveStatus = 0;
+
+        try{
+            String updateName = "UPDATE CosplayCharacter set description = (?) where characterID = (?)";
+            PreparedStatement recordSearch = conn.prepareStatement(updateName);
+            recordSearch.setString(1,desc);
+            recordSearch.setInt(2,characterID);
+            saveStatus = recordSearch.executeUpdate();
+
+        } catch (SQLException se){
+            se.printStackTrace();
+        }
+
+    }
+
     public void insertCharacterFromFile(){
         try {
             BufferedReader bufReader = new BufferedReader(new FileReader("addCharacters.txt"));

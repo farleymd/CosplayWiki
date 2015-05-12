@@ -94,7 +94,6 @@ public class UniversePage extends JFrame {
 
                     int genreIDInt = universeCharacter.getGenreID();
                     genreText = wikiDB.getGenreName(genreIDInt);
-                    //genreNameLabel.setText(genreText);
 
                     int universeIDInt = universeCharacter.getUniverseID();
                     String universeText = wikiDB.getUniverseName(universeIDInt);

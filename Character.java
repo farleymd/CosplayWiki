@@ -6,8 +6,6 @@ import java.util.StringTokenizer;
  * Created by marty.farley on 5/3/2015.
  */
 public class Character {
-    private WikiDB wikiDB;
-
     private int characterID;
     private String characterName;
     private String gender;
