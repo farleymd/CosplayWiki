@@ -96,8 +96,7 @@ public class GenrePage extends JFrame {
 
                         int genreIDInt = genreCharacter.getGenreID();
                         genreText = wikiDB.getGenreName(genreIDInt);
-                        //genreNameLabel.setText(genreText);
-
+                       
                         int universeIDInt = genreCharacter.getUniverseID();
                         String universeText = wikiDB.getUniverseName(universeIDInt);
 
@@ -289,24 +288,6 @@ public class GenrePage extends JFrame {
             int characterID = mediaCharacterIDs.get(i);
 
             Character genreCharacter = wikiDB.returnCharacter(characterID);
-
-            characterID = genreCharacter.getCharacterID();
-
-            String characterName = genreCharacter.getCharacterName();
-
-
-            String genderText = genreCharacter.getGender();
-
-            int genreIDInt = genreCharacter.getGenreID();
-
-            int universeIDInt = genreCharacter.getUniverseID();
-            String universeText = wikiDB.getUniverseName(universeIDInt);
-
-            int mediaIDInt = genreCharacter.getMediaID();
-            String mediaText = wikiDB.getMediaTile(mediaIDInt);
-
-            String descriptionText = genreCharacter.getDescription();
-
 
             GenrePage.this.characterListModel.addElement(genreCharacter);
         }

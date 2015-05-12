@@ -3,6 +3,8 @@ package Marty.company;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
@@ -122,6 +124,25 @@ public class UniversePage extends JFrame {
             }
         });
 
+        universeTree.addTreeSelectionListener(new TreeSelectionListener() {
+            @Override
+            public void valueChanged(TreeSelectionEvent e) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) universeTree.getLastSelectedPathComponent();
+                if (node==null) {
+                    return;
+                }
+
+                String nodeName = node.toString();
+                int nodeChildCount = node.getChildCount();
+
+                if (nodeChildCount == 0){
+                    displayMedia(nodeName);
+                } else {
+                    //displayGenre
+                }
+            }
+        });
+
         viewCharacterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -219,5 +240,19 @@ public class UniversePage extends JFrame {
 
 
         universeTree.setModel(new DefaultTreeModel(universeMainTree));
+    }
+
+    private void displayMedia (String mediaName) {
+        ArrayList<Integer> mediaCharacterIDs = wikiDB.searchMediaTitle(mediaName);
+
+        UniversePage.this.universeListModel.removeAllElements();
+
+        for (int i = 0; i < mediaCharacterIDs.size(); i++) {
+            int characterID = mediaCharacterIDs.get(i);
+
+            Character genreCharacter = wikiDB.returnCharacter(characterID);
+
+            UniversePage.this.universeListModel.addElement(genreCharacter);
+        }
     }
 }
