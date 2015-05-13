@@ -20,6 +20,12 @@ import java.util.Map;
 
 /**
  * Created by marty.farley on 5/11/2015.
+ *
+ * This class is dedicated to the Universe option of the search droplist.
+ *
+ * Users can search for a specific universe already stored in the database. The JTree will
+ * display the Universe > Media. Future enhancements will include genre of the media title. Tree nodes can then
+ * be selected, and any characters in that universe/media are displayed in the GUI's JList.
  */
 public class UniversePage extends JFrame {
     private WikiDB wikiDB;
@@ -30,10 +36,10 @@ public class UniversePage extends JFrame {
     private JButton searchButton;
     private JLabel universeNameLabel;
     private JTree universeTree;
-    private JScrollPane universeScroll;
     private JList universeList;
     private JButton viewCharacterButton;
     private JButton quitButton;
+    private JScrollPane universeScroll;
 
     final String character = "Character";
     final String genre = "Genre";
@@ -170,6 +176,13 @@ public class UniversePage extends JFrame {
                     try {
                         setVisible(false);
                         new CharacterPage(wikiDB).setVisible(true);
+                    } catch (IOException io){
+                        io.printStackTrace();
+                    }
+                } else if (searchDropList.getSelectedItem().equals(genre)){
+                    try {
+                        setVisible(false);
+                        new GenrePage(wikiDB).setVisible(true);
                     } catch (IOException io){
                         io.printStackTrace();
                     }

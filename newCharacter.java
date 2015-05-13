@@ -12,6 +12,11 @@ import java.io.IOException;
 
 /**
  * Created by marty.farley on 5/6/2015.
+ *
+ * This class controls addition of new character, if character cannot be found in existing database. Character name and
+ * description are required.
+ *
+ * Future enhancement: ability to add images at the same time as adding new character.
  */
 public class newCharacter extends JFrame {
     private WikiDB wikiDB;

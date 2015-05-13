@@ -8,6 +8,10 @@ import java.util.ArrayList;
 
 /**
  * Created by marty.farley on 5/2/2015.
+ *
+ * This class is dedicated to the database. Class methods include creating the database,
+ * filling the database with some general information, and any searching or updating
+ * done to the data by the GUI forms.
  */
 public class WikiDB {
     private static String protocol="jdbc:derby:";

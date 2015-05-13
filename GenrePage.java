@@ -7,7 +7,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -19,6 +18,17 @@ import java.util.*;
 
 /**
  * Created by marty.farley on 5/8/2015.
+ *
+ * This class is dedicated to the Genre option of the droplist in the main Character GUI.
+ *
+ * The GUI is made up of a Tree displaying the Genre > Universe > Media title, which can then
+ * be selected to display characters in that Genre/Universe/Media.
+ *
+ * The characters are displayed in the GUI's JList.
+ *
+ * Known bugs: The media titles duplicate in the JTree display.
+ *
+ * References: http://stackoverflow.com/questions/30146021/group-jtree-nodes-using-hashmap
  */
 public class GenrePage extends JFrame {
     private WikiDB wikiDB;
@@ -28,11 +38,11 @@ public class GenrePage extends JFrame {
     private JButton searchButton;
     private JButton quitButton;
     private JPanel genrePanel;
-    private JScrollPane genreScroll;
     private JList <Character> genreList;
     private JLabel genreNameLabel;
     private JTree genreTree;
     private JButton viewCharacterButton;
+    private JScrollPane genreScroll;
 
     final String character = "Character";
     final String genre = "Genre";
@@ -96,7 +106,7 @@ public class GenrePage extends JFrame {
 
                         int genreIDInt = genreCharacter.getGenreID();
                         genreText = wikiDB.getGenreName(genreIDInt);
-                       
+
                         int universeIDInt = genreCharacter.getUniverseID();
                         String universeText = wikiDB.getUniverseName(universeIDInt);
 

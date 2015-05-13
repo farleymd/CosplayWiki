@@ -10,20 +10,36 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.List;
 
 /**
  * Created by marty.farley on 5/3/2015.
+ *
+ * This is the main GUI display class. This page controls character searches, character display (data and images),
+ * and editing of character. The Images are displayed dynamically in a 4 by X grid display. Images can also be added
+ * from this page.
+ *
+ * Known bugs: if searching for a second character, the first character's images are still present, sometimes
+ * overlapping the JPanel display of the second character's images.
+ *
+ * Known buys: new image doesn't display right after being added.
+ *
+ * Future enhancements: Split images (adding, display) into a different class. Ability to remove image.
+ *  Turn image into clickable URL link to open in browser. Display image in separate JFrame.
+ *  Warn user if image is not read by the program.
+ *
+ *  Future enhancement: Add ability to add/pull tutorials related to that character's cosplay.
+ *
+ *  References: http://stackoverflow.com/questions/30112958/image-isnt-properly-sizing-in-gridbaglayout,
+ *  http://stackoverflow.com/questions/30088682/image-icon-not-displaying-in-jpanel,
+ *  http://stackoverflow.com/questions/30174681/trying-to-overwrite-replace-jpanels
+ *
  */
+
 public class CharacterPage extends JFrame {
     private WikiDB wikiDB;
 
@@ -123,6 +139,9 @@ public class CharacterPage extends JFrame {
                     //will always be the same
                     ArrayList<Character> characterDetails = wikiDB.searchCharacter(searchString);
 
+
+                    //If the character doesn't exist, ask the user if they'd like the add the
+                    //character to the wiki
                     if (characterDetails.size() == 0) {
 
                         int reply = JOptionPane.showConfirmDialog(null, "That character cannot be found." +
@@ -191,7 +210,7 @@ public class CharacterPage extends JFrame {
                         setContentPane(rootPanel);
                         pack();
                         setVisible(true);
-                        System.out.println("Repainting.");
+                        //System.out.println("Repainting.");
                     }
                 }
             }
@@ -288,6 +307,7 @@ public class CharacterPage extends JFrame {
         searchText.addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
+                //Reset the font from italic to normal when clicking in the search text
                 super.focusGained(e);
                 searchText.setText("");
 
@@ -339,6 +359,7 @@ public class CharacterPage extends JFrame {
                         if (reply == JOptionPane.OK_OPTION){
                             wikiDB.editCharacterGender(characterID, newGender.getText());
                         }
+
                     } else if (s.equals("Genre")){
                         JPanel myPanel = new JPanel();
                         JTextField newGenre = new JTextField(15);
@@ -509,6 +530,8 @@ public class CharacterPage extends JFrame {
     }
 
     public void showCharacter(Character character){
+        //Method used by the Genre, Universe and Media GUI classes to show
+        //selected character in the CharacterPage GUI
 
         int characterID = character.getCharacterID();
 
@@ -555,6 +578,8 @@ public class CharacterPage extends JFrame {
     }
 
     private JPanel displayImages(ArrayList<String> characterImages, GridBagConstraints c){
+        //Method used by Genre, Universe and Media GUI classes when displaying a
+        //selected character.
         BufferedImage img1 = null;
         JPanel imagesPanel = new JPanel();
         imagesPanel.setLayout(new GridBagLayout());
@@ -653,10 +678,10 @@ public class CharacterPage extends JFrame {
 
     private void addImagesToFile(String characterName, String author, String url, BufferedWriter openImageWriter){
         try{
-            //Strings must be inserted into the file, and read from the file, because if the
-            //int of the genre, media, or universe doesn't exist, the whole character will be
-            //rejected. If the String of the genre, media or universe doesn't exist, the
-            //database will insert it automatically.
+            //Character name must be used, even though characterID is used to store the data in the table,
+            //because characterID is potentially reassigned from the txt file. Character name is
+            //easier to link as name is the same.
+            //Txt containing character must be loaded before image txt.
 
             openImageWriter.write(characterName + " = ");
             openImageWriter.write(author + " = ");

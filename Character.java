@@ -3,7 +3,10 @@ package Marty.company;
 import java.util.StringTokenizer;
 
 /**
- * Created by marty.farley on 5/3/2015.
+ * Created by marty.farley on 5/3/2015
+ *
+ * This class is used primarily as a reference tool and ArrayList wrapper. Class has 2 constructor methods;
+ * second constructor method is blanked, and used sparringly.
  */
 public class Character {
     private int characterID;
